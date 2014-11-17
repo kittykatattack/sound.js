@@ -1,5 +1,15 @@
 /*
-Prologue: Fixing the WebAudio API
+Sound for games
+===============
+
+A complete micro library of useful, modular functions that help you load, play, control
+and generate sound effects and music for games and interactive applications. All the
+code targets the WebAudio API.
+*/
+
+
+/*
+Fixing the WebAudio API
 --------------------------
 
 The WebAudio API is so new that it's API is not consistently implemented properly across
@@ -103,17 +113,27 @@ Thank you, Chris!
   }
 }(window));
 
-//Define the audio context
+/*
+Define the audio context
+------------------------
+
+All this code uses a single `AudioContext` If you want to use any of these functions
+independently of this file, make sure that have an `AudioContext` called `actx`. 
+*/
 var actx = new AudioContext();
 
 /*
-# sounds
-All the loaded sound files are stored in this object. It has
-a `load` method that manages asset loading. You can load sounds at
-any time during the game by using the `sounds.load` method.
+sounds
+------
 
-Here's how to load three sound files from the `sounds` folder and 
-call a `setup` method when they're finished loading:
+`sounds` is an object that you can use to store all your loaded sound fles. 
+It also has a helpful `load` method that manages asset loading. You can load sounds at
+any time during the game by using the `sounds.load` method. You don't have to use
+the `sounds` object or its `load` method, but it's a really convenient way to 
+work with sound file assets.
+
+Here's how could use the `sound` object to load three sound files from a `sounds` folder and 
+call a `setup` method when all the files have finished loading:
 
     sounds.load([
       "sounds/shoot.wav", 
@@ -122,7 +142,7 @@ call a `setup` method when they're finished loading:
     ]);
     sounds.whenLoaded = setup;
 
-You can now acess these loaded sounds like this:
+You can now access these loaded sounds in you application code like this:
 
 var shoot = sounds["sounds/shoot.wav"],
     music = sounds["sounds/music.wav"],
@@ -147,12 +167,15 @@ var sounds = {
 
   load: function(sources) {
     console.log("Loading sounds..");
+
     //Get a reference to this asset object so we can
     //refer to it in the `forEach` loop ahead.
     var self = this;
+
     //Find the number of files that need to be loaded.
     self.toLoad = sources.length;
     sources.forEach(function(source){
+
       //Find the file extension of the asset.
       var extension = source.split('.').pop();
 
@@ -160,10 +183,13 @@ var sounds = {
       //Load audio files that have file extensions that match
       //the `audioExtensions` array.
       if (self.audioExtensions.indexOf(extension) !== -1) {
+
         //Create a sound sprite.
         var soundSprite = makeSound(source, self.loadHandler.bind(self));
+
         //Get the sound file name.
         soundSprite.name = source;
+
         //If you just want to extract the file name with the
         //extension, you can do it like this:
         //soundSprite.name = source.split("/").pop();
@@ -185,10 +211,13 @@ var sounds = {
     var self = this;
     self.loaded += 1;
     console.log(self.loaded);
+
     //Check whether everything has loaded.
     if (self.toLoad === self.loaded) {
+
       //If it has, run the callback function that was assigned to the `whenLoaded` property
       console.log("Sounds finished loading");
+
       //Reset `loaded` and `toLoaded` so we can load more assets
       //later if we want to.
       self.toLoad = 0;
@@ -199,14 +228,22 @@ var sounds = {
 };
 
 /*
-#makeSound
-`makeSound` creates and returns and WebAudio sound sprite. 
+makeSound
+---------
+
+`makeSound` is the function you want to use to load and play sound files.
+It creates and returns and WebAudio sound object with lots of useful methods you can
+use to control the sound. 
 You can use it to load a sound like this:
 
     var anySound = makeSound("sounds/anySound.mp3", loadHandler);
 
+
+The code above will load the sound and then call the `loadHandler`
+when the sound has finished loading. 
 (However, it's more convenient to load the sound file using 
-the `sounds.load` method described above.)
+the `sounds.load` method described above, so I don't recommend loading sounds
+like this unless you need more low-level control.)
 
 After the sound has been loaded you can access and use it like this:
 
@@ -218,6 +255,9 @@ After the sound has been loaded you can access and use it like this:
       anySound.pause();
       anySound.playFrom(second);
       anySound.restart();
+      anySound.setReverb(2, 2, false);
+      anySound.setEcho(0.2, 0.2, 0);
+      anySound.playbackRate = 0.5;
     }
 */
 
@@ -460,7 +500,36 @@ function makeSound(source, loadHandler) {
 };
 
 
-//The `soundEffect` function that makes all these sounds
+/*
+soundEffect
+-----------
+
+The `soundEffect` function let's you generate your sounds and musical notes from scratch
+(Reverb effect requires the `impulseResponse` function that you'll see further ahead in this file)
+
+To create a custom sound effect, define all the parameters that characterize your sound. Here's how to
+create a laser shooting sound:
+
+    soundEffect(
+      1046.5,           //frequency
+      0,                //attack
+      0.3,              //decay
+      "sawtooth",       //waveform
+      1,                //Volume
+      -0.8,             //pan
+      0,                //wait before playing
+      1200,             //pitch bend amount
+      false,            //reverse bend
+      0,                //random pitch range
+      25,               //dissonance
+      [0.2, 0.2, 2000], //echo: [delay, feedback, filter]
+      undefined         //reverb: [duration, decay, reverse?]
+    );
+
+Experiment by changing these parameters to see what kinds of effects you can create, and build
+your own library of custom sound effects for games.
+*/
+
 function soundEffect(
   frequencyValue,      //The sound's fequency pitch in Hertz
   attack,              //The time, in seconds, to fade the sound in
@@ -697,10 +766,13 @@ function soundEffect(
 }
 
 /*
-# impulseResponse
+impulseResponse
+---------------
+
 The `makeSound` and `soundEffect` functions uses `impulseResponse`  to help create an optional reverb effect.  
 It simulates a model of sound reverberation in an acoustic space which 
-a convolver node can blend with the source sound.
+a convolver node can blend with the source sound. Make sure to include this function along with `makeSound`
+and `soundEffect` if you need to use the reverb feature.
 */
 
 function impulseResponse(duration, decay, reverse, actx) {
@@ -740,7 +812,11 @@ function impulseResponse(duration, decay, reverse, actx) {
 
 
 /*
-# keyboard
+keyboard
+--------
+
+This isn't really necessary - I just included it for fun to help with the 
+examples in the `index.html` files.
 The `keyboard` helper function creates `key` objects
 that listen for keyboard events. Create a new key object like
 this:
@@ -749,14 +825,19 @@ this:
 
 Then assign `press` and `release` methods like this:
 
-  keyObject.press = function() {
-    //key object pressed
-  };
-  keyObject.release = function() {
-    //key object released
-  };
+    keyObject.press = function() {
+      //key object pressed
+    };
+    keyObject.release = function() {
+      //key object released
+    };
 
 Keyboard objects also have `isDown` and `isUp` Booleans that you can check.
+This is so much easier than having to write out tedious keyboard even capture 
+code from scratch.
+
+Like I said, the `keyboard` function has nothing to do with generating sounds,
+so just delete it if you don't want it!
 */
 
 function keyboard(keyCode) {
