@@ -541,7 +541,7 @@ function soundEffect(
   pitchBendAmount,     //The number of Hz in which to bend the sound's pitch down
   reverse,             //If `reverse` is true the pitch will bend up
   randomValue,         //A range, in Hz, within which to randomize the pitch
-  dissonance,          //A value in Hz. It creates 2 dissonant frequencies above below the target pitch
+  dissonance,          //A value in Hz. It creates 2 dissonant frequencies above and below the target pitch
   echo,                //An array: [delayTimeInSeconds, feedbackTimeInSeconds, filterValueInHz]
   reverb               //An array: [durationInSeconds, decayRateInSeconds, reverse]
 ) {

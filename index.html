@@ -32,8 +32,11 @@ Part 1 - Working with sound files
 sounds.load([
   "sounds/shoot.wav", 
   "sounds/music.wav",
-  "sounds/bounce.mp3",
+  "sounds/bounce.mp3"
 ]);
+
+//Assign the callback function that should run
+//when the sounds have loaded
 sounds.whenLoaded = setup;
 
 function setup() {
