@@ -28,7 +28,9 @@ Installation
 -------------
 
 Just link to the `sound.js` file with a `<script>` tag:
-`<script src="sound.js"></script>`
+```
+<script src="sound.js"></script>
+```
 Or just copy/paste whichever functions you need from the `sound.js`
 file into your own project code.
 
@@ -251,7 +253,7 @@ The `jumpSound` has an `attack` value of 0.05, which means there's a
 very quick fade-in to the sound. It's so quick that you can't really hear it, but it
 softens the start of sound a bit. The `reverse` value is `true` which means
 that the pitch bends up instead down. (This makes sense because
-jumping character jump upwards.) The `randomValue` is 100. That means
+jumping characters jump upwards.) The `randomValue` is 100. That means
 the pitch will randomize within a range 100 Hz above and below the target frequency, so
 that the sound's pitch is slightly different every time. This adds organic interest to
 the sound and makes the game world feel more alive and unpredictable.
@@ -291,7 +293,7 @@ target frequency which interfere with each other and the main sound.
 But it's not just for sound effects! You can use the `soundEffect`
 function to create musical notes, and play them at set intervals.
 Here's a function called `bonusSound` which plays three notes (D, A
-and high D)in a
+and high D) in a
 rising pitch sequence. It's typical of the kind of musical motif you might
 here when a game character scores some bonus points, like picking up
 stars or coins. 
@@ -307,7 +309,7 @@ function bonusSound() {
 ```
 (When you hear this sound you might have a flashback to 1985!)
 The key to making it work is the last argument: the `wait` value. The
-first sound's `wait` value is 0, which means the sound should play
+first sound's `wait` value is 0, which means the sound will play
 immediately. The second sound's `wait` value is 0.1, which means it
 will play after a delay of 100 milliseconds. The last sound's `wait`
 value is `0.2`, which will make it play in 200 milliseconds. This
@@ -316,7 +318,7 @@ gap between them.
 
 With just a little more work you could use the `wait` feature to build
 a simple music sequencer, and build your own mini-library of musical sound effects
-just for playing notes. If you need it, here's how to covert
+just for playing notes. If you need it, here's how to convert
 frequencies in Hertz to real note values:
 
 [Note values of frequencies in Hertz](http://www.phy.mtu.edu/~suits/notefreqs.html) 
