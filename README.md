@@ -169,7 +169,7 @@ soundEffect(
   volumeValue,         //The sound's maximum volume
   panValue,            //The speaker pan. left: -1, middle: 0, right: 1
   wait,                //The time, in seconds, to wait before playing the sound
-  pitchBendAmount,     //The number of Hz in which to bend the sound's pitch down
+  pitchBendAmount,     //The number of Hz to bend the sound's pitch down
   reverse,             //If `reverse` is true the pitch will bend up
   randomValue,         //A range, in Hz, within which to randomize the pitch
   dissonance,          //A value in Hz. Creates 2 dissonant frequencies above and below the target pitch
@@ -182,10 +182,10 @@ soundEffect(
 browser quirks. In the future it might stabilize but, until then use
 it at your peril!)
 The strategy for using the `soundEffect` function is to tinker with
-all those parameters and come up with your own custom library of sound
+all these parameters and come up with your own custom library of sound
 effects for games. Think of it as a big sound board with thirteen colourful
-flashing dials you can play with. Yes, lucky thirteen. And think of yourself as a mad
-scientist!
+flashing dials you can play with. And think of yourself as a mad
+scientist and that thirteen is your lucky number!
 
 ###Shoot sound
 
@@ -211,11 +211,12 @@ function shootSound() {
 }
 ```
 The "sawtooth" waveform setting gives the sound a biting harshness.
-The `pitchBendAmount` is 1200, which means the sound's pitch drops a
-full octave from start to finish. That makes it sound like every laser
+The `pitchBendAmount` is 1200, which means the sound's pitch drops
+1200 Hz. from start to finish. That makes it sound like every laser
 from every science fiction movie you've ever seen. The `dissonance` value of 25 means that
 two extra overtones are added to the sound, 25 Hz above and below the
-main frequency. Those extra overtones add an edgy richness.
+main frequency. Those extra overtones add an edgy complexity to the
+tone.
 
 Because the `soundEffect` function is wrapped in a custom `shootSound`
 function, you can play the effect at any time in your application code
@@ -256,12 +257,12 @@ that the pitch bends up instead down. (This makes sense because
 jumping characters jump upwards.) The `randomValue` is 100. That means
 the pitch will randomize within a range 100 Hz above and below the target frequency, so
 that the sound's pitch is slightly different every time. This adds organic interest to
-the sound and makes the game world feel more alive and unpredictable.
+the sound and makes the game world feel alive.
 
 ###Explosion sound
 
 You can create a radically different `explosionSound` effect just by
-tweaking the same parameters.
+tweaking these same parameters.
 ```
 function explosionSound() {
   soundEffect(
@@ -283,10 +284,10 @@ function explosionSound() {
 
 ```
 This creates a low frequency rumble. The starting point for the
-explosion sound is to set the `freqeuncy` value extremely low: 16 Hz. It also
+explosion sound is to set the `frequency` value extremely low: 16 Hz. It also
 has a harsh "sawtooth" waveform. But what makes it really work is the
 `dissonance` value of 50. This adds two overtones above and below the
-target frequency which interfere with each other and the main sound.
+target frequency; they interfere with each other and the main sound.
 
 ###Making music
 
@@ -295,8 +296,8 @@ function to create musical notes, and play them at set intervals.
 Here's a function called `bonusSound` which plays three notes (D, A
 and high D) in a
 rising pitch sequence. It's typical of the kind of musical motif you might
-here when a game character scores some bonus points, like picking up
-stars or coins. 
+hear when a game character scores some bonus points, like picking up
+stars or coins. (When you hear this sound you might have a flashback to 1985!)
 ```
 function bonusSound() {
   //D
@@ -307,16 +308,15 @@ function bonusSound() {
   soundEffect(1174.66, 0, 0.3, "square", 1, 0, 0.2);
 }
 ```
-(When you hear this sound you might have a flashback to 1985!)
 The key to making it work is the last argument: the `wait` value. The
 first sound's `wait` value is 0, which means the sound will play
 immediately. The second sound's `wait` value is 0.1, which means it
 will play after a delay of 100 milliseconds. The last sound's `wait`
-value is `0.2`, which will make it play in 200 milliseconds. This
+value is 0.2, which will make it play in 200 milliseconds. This
 means that all three notes play in sequence with a 100 millisecond
 gap between them.
 
-With just a little more work you could use the `wait` feature to build
+With just a little more work you could use the `wait` parameter to build
 a simple music sequencer, and build your own mini-library of musical sound effects
 just for playing notes. If you need it, here's how to convert
 frequencies in Hertz to real note values:
