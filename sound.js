@@ -268,7 +268,14 @@ function makeSound(source, loadHandler) {
 
   //Set the default properties.
   o.volumeNode = actx.createGain();
-  o.panNode = actx.createPanner();
+
+  //Create the pan node using the effcient `createStereoPanner`
+  //method, if it's available.
+  if (!actx.createStereoPanner) {
+    o.panNode = actx.createPanner();
+  } else {
+    o.panNode = actx.createStereoPanner();
+  }
   o.delayNode = actx.createDelay();
   o.feedbackNode = actx.createGain();
   o.filterNode = actx.createBiquadFilter();
@@ -436,21 +443,35 @@ function makeSound(source, loadHandler) {
       },
       enumerable: true, configurable: true
     },
+
+    //The pan node uses the high-effciency stereo panner, if it's
+    //available. But, because this is a new addition to the 
+    //WebAudio spec, it might not be available on all browsers.
+    //So the code checks for this and uses the older 3D panner
+    //if 2D isn't available.
     pan: {
       get: function() {
-        return o.panValue;
+        if (!actx.createStereoPanner) {
+          return o.panValue;
+        } else {
+          return o.panNode.pan.value;
+        }
       },
       set: function(value) {
-        //Panner objects accept x, y and z coordinates for 3D
-        //sound. However, because we're only doing 2D left/right
-        //panning we're only interested in the x coordinate,
-        //the first one. However, for a natural effect, the z
-        //value also has to be set proportionately.
-        var x = value,
-            y = 0,
-            z = 1 - Math.abs(x);
-        o.panNode.setPosition(x, y, z);
-        o.panValue = value;
+        if (!actx.createStereoPanner) {
+          //Panner objects accept x, y and z coordinates for 3D
+          //sound. However, because we're only doing 2D left/right
+          //panning we're only interested in the x coordinate,
+          //the first one. However, for a natural effect, the z
+          //value also has to be set proportionately.
+          var x = value,
+              y = 0,
+              z = 1 - Math.abs(x);
+          o.panNode.setPosition(x, y, z);
+          o.panValue = value;
+        } else {
+          o.panNode.pan.value = value;
+        }
       },
       enumerable: true, configurable: true
     }
