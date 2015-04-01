@@ -284,7 +284,7 @@ function makeSound(source, loadHandler) {
   o.buffer = null;
   o.source = null;
   o.loop = false;
-  o.isPlaying = false;
+  o.playing = false;
 
   //The function that should run when the sound is loaded.
   o.loadHandler = undefined;
@@ -380,25 +380,25 @@ function makeSound(source, loadHandler) {
       0, o.startOffset % o.buffer.duration
     );
 
-    //Set `isPlaying` to `true` to help control the
+    //Set `playing` to `true` to help control the
     //`pause` and `restart` methods.
-    o.isPlaying = true;
+    o.playing = true;
   };
 
   o.pause = function() {
     //Pause the sound if it's playing, and calculate the
     //`startOffset` to save the current position.
-    if (o.isPlaying) {
+    if (o.playing) {
       o.soundNode.stop(0);
       o.startOffset += actx.currentTime - o.startTime;
-      o.isPlaying = false;
+      o.playing = false;
     }
   };
 
   o.restart = function() {
     //Stop the sound if it's playing, reset the start and offset times,
     //then call the `play` method again.
-    if (o.isPlaying) {
+    if (o.playing) {
       o.soundNode.stop(0);
     }
     o.startOffset = 0;
@@ -406,7 +406,7 @@ function makeSound(source, loadHandler) {
   };
 
   o.playFrom = function(value) {
-    if (o.isPlaying) {
+    if (o.playing) {
       o.soundNode.stop(0);
     }
     o.startOffset = value;
@@ -429,6 +429,36 @@ function makeSound(source, loadHandler) {
     if (reverse === undefined) reverse = false;
     o.reverbImpulse = impulseResponse(duration, decay, reverse, actx);
     o.reverb = true;
+  };
+
+  //A general purpose `fade` method for fading sounds in or out.
+  //The first argument is the volume that the sound should
+  //fade to, and the second value is the duration, in seconds,
+  //that the fade should last.
+  o.fade = function(endValue, durationInSeconds) {
+    if (o.playing) {
+      o.volumeNode.gain.linearRampToValueAtTime(
+        o.volumeNode.gain.value, actx.currentTime
+      );
+      o.volumeNode.gain.linearRampToValueAtTime(
+        endValue, actx.currentTime + durationInSeconds
+      );
+    }
+  };
+
+  //Fade a sound in, from an intial volume level of zero.
+  o.fadeIn = function(durationInSeconds) {
+    
+    //Set the volume to 0 so that you can fade
+    //in from silence
+    o.volumeNode.gain.value = 0;
+    o.fade(1, durationInSeconds);
+  
+  };
+
+  //Fade a sound out, from its current volume level to zero.
+  o.fadeOut = function(durationInSeconds) {
+    o.fade(0, durationInSeconds);
   };
   
   //Volume and pan getters/setters.
@@ -584,16 +614,25 @@ function soundEffect(
 
   //Create an oscillator, gain and pan nodes, and connect them
   //together to the destination
-  var oscillator = actx.createOscillator(),
-      volume = actx.createGain(),
-      pan = actx.createPanner();
+  var oscillator, volume, pan;
+  oscillator = actx.createOscillator();
+  volume = actx.createGain();
+  if (!actx.createStereoPanner) {
+    pan = actx.createPanner();
+  } else {
+    pan = actx.createStereoPanner();
+  }
   oscillator.connect(volume);
   volume.connect(pan);
   pan.connect(actx.destination);
 
   //Set the supplied values
   volume.gain.value = volumeValue;
-  pan.setPosition(panValue, 0, 1 - Math.abs(panValue));
+  if (!actx.createStereoPanner) {
+    pan.setPosition(panValue, 0, 1 - Math.abs(panValue));
+  } else {
+    pan.pan.value = panValue; 
+  }
   oscillator.type = type;
 
   //Optionally randomize the pitch. If the `randomValue` is greater

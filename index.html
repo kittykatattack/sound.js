@@ -13,13 +13,15 @@
 <br>d - Restart music
 <br>e - Play music from the 10 second point
 <br>f - Play the bounce sound with an echo effect
+<br>g - Fade the music out over 3 seconds
+<br>h - Fade the music in over 3 seconds
 <br>
 <br>Generated sound effects
 <br>
-<br>g - Shoot 
-<br>h - Jump
-<br>i - Explosion 
-<br>j - Bonus
+<br>i - Shoot 
+<br>j - Jump
+<br>k - Explosion 
+<br>l - Bonus
 </p>
 <script>
 
@@ -84,6 +86,8 @@ function setup() {
       d = keyboard(68),
       e = keyboard(69),
       f = keyboard(70);
+      g = keyboard(71);
+      h = keyboard(72);
 
   //Control the sounds based on which keys are pressed
 
@@ -92,7 +96,9 @@ function setup() {
 
   //Play the loaded music sound
   b.press = function() {
-    if (!music.isPlaying) music.play();
+    if (!music.playing) {
+      music.play();
+    }
     console.log("music playing");
   };
 
@@ -116,6 +122,15 @@ function setup() {
   
   //Play the bounce sound
   f.press = function() { bounce.play() };
+
+  //Fade the music out over 3 seconds
+  g.press = function() { 
+    music.fadeOut(3);
+  };
+  //Fade the music in over 3 seconds
+  h.press = function() { 
+    music.fadeIn(3);
+  };
 }
 
 /*
@@ -123,15 +138,15 @@ Part 2 - Working with sound effects
 ===================================
 */
 
-var g = keyboard(71),
-    h = keyboard(72),
-    i = keyboard(73),
-    j = keyboard(74);
+var i = keyboard(73),
+    j = keyboard(74),
+    k = keyboard(75),
+    l = keyboard(76);
 
-g.press = function(){ shootSound() };
-h.press = function(){ jumpSound() };
-i.press = function(){ explosionSound() };
-j.press = function(){ bonusSound() };
+i.press = function(){ shootSound() };
+j.press = function(){ jumpSound() };
+k.press = function(){ explosionSound() };
+l.press = function(){ bonusSound() };
 
 //The sound effect functions
 
