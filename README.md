@@ -3,7 +3,8 @@ Sound for Games
 
 "Sound for Games" is micro-library that lets you load, play and generate sound effects and music for
 games and interactive applications. It's very small: less than 800
-lines of code and no dependencies.
+lines of code and no dependencies. [Click here to try an interactive
+demo.](https://cdn.rawgit.com/kittykatattack/soundForGames/master/index.html)
 
 At its heart it's composed of
 just two, short, independent functions: `makeSound` and `soundEffect`. The `makeSound` function helps you
@@ -39,7 +40,7 @@ Loading sound files
 
 The best way to load sound files is to use the `sounds` object's
 `load` method. List the each sound file's path and name in the `sound.load`
-method's array. The assign a callback function to `sounds.whenLoaded`.
+method's array. Then assign a callback function to `sounds.whenLoaded`.
 ```
 //Load the sounds
 sounds.load([
@@ -84,7 +85,7 @@ Playing and controlling loaded sounds
 -------------------------------------
 
 You can play, pause, loop and restart sounds as well as set their volume and speaker
-pan settings,  Here's how:
+pan settings. You can also fade sounds in or out. Here's how:
 ```
   //Play the sound
   music.play();
@@ -106,6 +107,16 @@ pan settings,  Here's how:
   //-1 is the full left speaker, 0 is the middle, 1 is the full right
   //speaker
   music.pan = -0.8;
+
+  //Fade a sound out, over 3 seconds
+  music.fadeOut(3);
+
+  //Fade a sound in, over 2 seconds
+  music.fadeIn(2)
+
+  //Fade a sound to a volume level of `0.3` over 1 second
+  music.fade(0.3, 1);
+
 ```
 ### Change the playback rate
 Use `playbackRate` to change the speed at which the sound plays back.
@@ -159,7 +170,7 @@ Generating sound effects and music
 
 Use the versatile `soundEffect` function to create an almost limitless
 variety of sound effects using thirteen low-level parameters. Here's a model
-for using it, including a description of what each parameter does
+for using it, including a description of what each parameter does.
 ```
 soundEffect(
   frequencyValue,      //The sound's fequency pitch in Hertz
@@ -281,7 +292,6 @@ function explosionSound() {
     undefined    //reverb array: [duration, decay, reverse?]
   );
 }
-
 ```
 This creates a low frequency rumble. The starting point for the
 explosion sound is to set the `frequency` value extremely low: 16 Hz. It also

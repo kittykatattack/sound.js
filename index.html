@@ -78,7 +78,6 @@ function setup() {
   //Optionally set the music playback rate to half speed
   //music.playbackRate = 0.5;
 
-
   //Capture the keyboard events
   var a = keyboard(65),
       b = keyboard(66),
@@ -127,6 +126,7 @@ function setup() {
   g.press = function() { 
     music.fadeOut(3);
   };
+
   //Fade the music in over 3 seconds
   h.press = function() { 
     music.fadeIn(3);
