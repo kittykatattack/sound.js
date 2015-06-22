@@ -1,5 +1,5 @@
 /*
-Sound for games
+Sound.js
 ===============
 
 A complete micro library of useful, modular functions that help you load, play, control
