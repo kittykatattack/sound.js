@@ -161,7 +161,7 @@ reverb effect should be reversed. Set it to `false` for normal reverb, or
 to `true` for a spooky reverse reverb. Set the sound's `reverb`
 property to `false` if you need to disable the reverb effect later.
 
-This is how work with sound files. But "Sound for Games" also lets you
+This is how work with sound files. But Sound.js also lets you
 generate your own
 music and sound effects from scratch.
 
