@@ -334,3 +334,41 @@ frequencies in Hertz to real note values:
 [Note values of frequencies in Hertz](http://www.phy.mtu.edu/~suits/notefreqs.html) 
 
 Have fun!
+
+Advanced sound loading and decoding configurations
+--------------------------------------------------
+
+What if you're already using your own custom file and asset loading
+system, and just want to generate a sound object from a pre-loaded
+audio file? You can do this with the help of `makeSound`'s' optional 3rd and 4th arguments:
+
+   var anySound = makeSound(source, loadHandler, loadTheSound?, xhrObject);
+
+`loadTheSound?` is a Boolean (true/false) value that, if `false` prevents the sound file
+from being loaded. So, if you're working with a sound file that you've already loaded
+somehow, set it to `false`.
+
+`xhrObject`, the optional 4th argument, is the XHR object that was used to load the sound. Again, if
+you're using your own custom file loading system, provide the XHR
+object that you've used to load the sound file. If you supply the `xhr` argument, `makeSound`
+will skip the file loading step (because you've already done that), but still decode the audio buffer for you.
+(Note: If you are loading the sound file using another file loading library, make sure that your sound
+files are loaded with the XHR `responseType = "arraybuffer"` option.)
+
+For example, here's how you could use this advanced configuration to decode a sound that you've already loaded
+using your own custom loading system:
+
+   var soundSprite = makeSound(source, decodeHandler.bind(this), false, xhr);
+
+When the file has finished being decoded, your custom `decodeHandler` will run, which will tell you
+that the file has finished decoding.
+
+If you're creating more than one sound like this, use counter variables to track the number of sounds
+you need to decode, and the number of sounds that have already been decoded. When both sets of counters are the
+same, you'll know that all your sound files have finished decoding and you can proceed with the rest
+of you application. (The [Hexi game engine](https://github.com/kittykatattack/hexi) uses `makeSound` in this way.)
+
+If you need any help integrating `Sound.js` with your own custom file
+loading system, create a new issue in this GitHub repository and
+we'll do our best to help :)
+

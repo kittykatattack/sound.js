@@ -186,7 +186,7 @@ var sounds = {
       if (self.audioExtensions.indexOf(extension) !== -1) {
 
         //Create a sound sprite.
-        var soundSprite = makeSound(source, self.loadHandler.bind(self));
+        var soundSprite = makeSound(source, self.loadHandler.bind(self), true, false);
 
         //Get the sound file name.
         soundSprite.name = source;
@@ -260,9 +260,40 @@ After the sound has been loaded you can access and use it like this:
       anySound.setEcho(0.2, 0.2, 0);
       anySound.playbackRate = 0.5;
     }
+   
+For advanced configurations, you can optionally supply `makeSound` with optional 3rd and 
+4th arguments:
+
+   var anySound = makeSound(source, loadHandler, loadTheSound?, xhrObject);
+
+`loadTheSound?` is a Boolean (true/false) value that, if `false` prevents the sound file
+from being loaded. You would only want to set it to `false` like this if you were
+using another file loading library to load the sound, and didn't want it to be loaded
+twice.
+
+`xhrObject`, the optional 4th argument, is the XHR object that was used to load the sound. Again, you 
+would only supply this if you were using another file loading library to load the sound,
+and that library had generated its own XHR object. If you supply the `xhr` argument, `makeSound`
+will skip the file loading step (because you've already done that), but still decode the audio buffer for you.
+(If you are loading the sound file using another file loading library, make sure that your sound
+files are loaded with the XHR `responseType = "arraybuffer"` option.)
+
+For example, here's how you could use this advanced configuration to decode a sound that you've already loaded
+using your own custom loading system:
+
+   var soundSprite = makeSound(source, decodeHandler.bind(this), false, xhr);
+
+When the file has finished being decoded, your custom `decodeHandler` will run, which tells you
+that the file has finished decoding.
+
+If you're creating more than one sound like this, use counter variables to track the number of sounds
+you need to decode, and the number of sounds that have been decoded. When both sets of counters are the
+same, you'll know that all your sound files have finished decoding and you can proceed with the rest
+of you application. (The [Hexi game engine](https://github.com/kittykatattack/hexi) uses `makeSound` in this way.)
+
 */
 
-function makeSound(source, loadHandler) {
+function makeSound(source, loadHandler, loadSound, xhr) {
 
   //The sound object that this function returns.
   var o = {};
@@ -270,7 +301,7 @@ function makeSound(source, loadHandler) {
   //Set the default properties.
   o.volumeNode = actx.createGain();
 
-  //Create the pan node using the effcient `createStereoPanner`
+  //Create the pan node using the efficient `createStereoPanner`
   //method, if it's available.
   if (!actx.createStereoPanner) {
     o.panNode = actx.createPanner();
@@ -283,7 +314,7 @@ function makeSound(source, loadHandler) {
   o.convolverNode = actx.createConvolver();
   o.soundNode = null;
   o.buffer = null;
-  o.source = null;
+  o.source = source;
   o.loop = false;
   o.playing = false;
 
@@ -447,7 +478,7 @@ function makeSound(source, loadHandler) {
     }
   };
 
-  //Fade a sound in, from an intial volume level of zero.
+  //Fade a sound in, from an initial volume level of zero.
   o.fadeIn = function(durationInSeconds) {
     
     //Set the volume to 0 so that you can fade
@@ -475,7 +506,7 @@ function makeSound(source, loadHandler) {
       enumerable: true, configurable: true
     },
 
-    //The pan node uses the high-effciency stereo panner, if it's
+    //The pan node uses the high-efficiency stereo panner, if it's
     //available. But, because this is a new addition to the 
     //WebAudio spec, it might not be available on all browsers.
     //So the code checks for this and uses the older 3D panner
@@ -508,48 +539,61 @@ function makeSound(source, loadHandler) {
     }
   });
 
-  //The `load` method. It will call the `loadHandler` passed
-  //that was passed as an argument when the sound has loaded.
-  o.load = function() {
-    var xhr = new XMLHttpRequest();
+  //Optionally Load and decode the sound.
+  if (loadSound) {
+    this.loadSound(o, source, loadHandler);
+  }
 
-    //Use xhr to load the sound file.
-    xhr.open("GET", source, true);
-    xhr.responseType = "arraybuffer";
-    xhr.addEventListener("load", function() {
-
-      //Decode the sound and store a reference to the buffer.
-      actx.decodeAudioData(
-        xhr.response,
-        function(buffer) {
-          o.buffer = buffer;
-          o.hasLoaded = true;
-
-          //This next bit is optional, but important.
-          //If you have a load manager in your game, call it here so that
-          //the sound is registered as having loaded.
-          if (loadHandler) {
-            loadHandler();
-          }
-        },
-
-        //Throw an error if the sound can't be decoded.
-        function(error) {
-          throw new Error("Audio could not be decoded: " + error);
-        }
-      );
-    });
-
-    //Send the request to load the file.
-    xhr.send();
-  };
-
-  //Load the sound.
-  o.load();
+  //Optionally, if you've loaded the sound using some other loader, just decode the sound
+  if (xhr) {
+    this.decodeAudio(o, xhr, loadHandler);
+  }
 
   //Return the sound object.
   return o;
-};
+}
+
+//The `loadSound` function loads the sound file using XHR
+function loadSound(o, source, loadHandler) {
+  var xhr = new XMLHttpRequest();
+
+  //Use xhr to load the sound file.
+  xhr.open("GET", source, true);
+  xhr.responseType = "arraybuffer";
+
+  //When the sound has finished loading, decode it using the
+  //`decodeAudio` function (which you'll see ahead)
+  xhr.addEventListener("load", decodeAudio.bind(this, o, xhr, loadHandler)); 
+
+  //Send the request to load the file.
+  xhr.send();
+}
+
+//The `decodeAudio` function decodes the audio file for you and 
+//launches the `loadHandler` when it's done
+function decodeAudio(o, xhr, loadHandler) {
+
+  //Decode the sound and store a reference to the buffer.
+  actx.decodeAudioData(
+    xhr.response,
+    function(buffer) {
+      o.buffer = buffer;
+      o.hasLoaded = true;
+
+      //This next bit is optional, but important.
+      //If you have a load manager in your game, call it here so that
+      //the sound is registered as having loaded.
+      if (loadHandler) {
+        loadHandler();
+      }
+    },
+
+    //Throw an error if the sound can't be decoded.
+    function(error) {
+      throw new Error("Audio could not be decoded: " + error);
+    }
+  );
+}
 
 
 /*
