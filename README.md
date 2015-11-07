@@ -4,8 +4,8 @@ Sound.js
 "Sound.js" is micro-library that lets you load, play and generate sound effects and music for
 games and interactive applications. It's very small: less than 800
 lines of code and no dependencies. [Click here to try an interactive
-demo.](https://cdn.rawgit.com/kittykatattack/sound.js/master/index.html). You can use it as-as, or
-integrated it into your existing framework.
+demo](https://cdn.rawgit.com/kittykatattack/sound.js/master/index.html). You can use it as-as, or
+integrate it into your existing framework.
 
 At its heart it's composed of
 just two, short, independent functions: `makeSound` and `soundEffect`. The `makeSound` function helps you
@@ -339,12 +339,14 @@ Have fun!
 Advanced sound loading and decoding configurations
 --------------------------------------------------
 
+(Note: This is advanced stuff that you probably don't need to know!)
+
 What if you're already using your own custom file and asset loading
 system, and just want to generate a sound object from a pre-loaded
-audio file? You can do this with the help of `makeSound`'s' optional 3rd and 4th arguments:
-
-   var anySound = makeSound(source, loadHandler, loadTheSound?, xhrObject);
-
+audio file? You can do this with the help of `makeSound`'s optional 3rd and 4th arguments:
+```js
+var anySound = makeSound(source, loadHandler, loadTheSound?, xhrObject);
+```
 `loadTheSound?` is a Boolean (true/false) value that, if `false` prevents the sound file
 from being loaded. So, if you're working with a sound file that you've already loaded
 somehow, set it to `false`.
@@ -358,9 +360,9 @@ files are loaded with the XHR `responseType = "arraybuffer"` option.)
 
 For example, here's how you could use this advanced configuration to decode a sound that you've already loaded
 using your own custom loading system:
-
-   var soundSprite = makeSound(source, decodeHandler.bind(this), false, xhr);
-
+```js
+var soundSprite = makeSound(source, decodeHandler.bind(this), false, xhr);
+```
 When the file has finished being decoded, your custom `decodeHandler` will run, which will tell you
 that the file has finished decoding.
 
@@ -372,9 +374,14 @@ of you application.
 The [Hexi game engine](https://github.com/kittykatattack/hexi) uses `makeSound` in this way. Here's the code
 from Hexi's `core.js` file that uses this configuration. It's just
 listed here as a general reference for you in case you need to
-integrate Sound.js in a similar in your own framework. (Hexi uses
-Chad Engler's brillaint [Resource Loader](https://github.com/englercj/resource-loader) to load and manage files).
+integrate Sound.js in a similar way in your own framework. (Hexi uses
+Chad Engler's brilliant [Resource Loader](https://github.com/englercj/resource-loader) to load and manage files).
 ```js
+//This is the code that will run when all the sounds have been decoded
+let finsihLoadingState = () = {
+  //... continue running the application...
+};
+
 //Variables to count the number of sound files and the sound files
 //that have been decoded. If both these numbers are the same at
 //some point, then we know all the sounds have been decoded and we
