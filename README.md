@@ -4,7 +4,8 @@ Sound.js
 "Sound.js" is micro-library that lets you load, play and generate sound effects and music for
 games and interactive applications. It's very small: less than 800
 lines of code and no dependencies. [Click here to try an interactive
-demo.](https://cdn.rawgit.com/kittykatattack/sound.js/master/index.html)
+demo.](https://cdn.rawgit.com/kittykatattack/sound.js/master/index.html). You can use it as-as, or
+integrated it into your existing framework.
 
 At its heart it's composed of
 just two, short, independent functions: `makeSound` and `soundEffect`. The `makeSound` function helps you
@@ -366,8 +367,79 @@ that the file has finished decoding.
 If you're creating more than one sound like this, use counter variables to track the number of sounds
 you need to decode, and the number of sounds that have already been decoded. When both sets of counters are the
 same, you'll know that all your sound files have finished decoding and you can proceed with the rest
-of you application. (The [Hexi game engine](https://github.com/kittykatattack/hexi) uses `makeSound` in this way.)
+of you application. 
 
+The [Hexi game engine](https://github.com/kittykatattack/hexi) uses `makeSound` in this way. Here's the code
+from Hexi's `core.js` file that uses this configuration. It's just
+listed here as a general reference for you in case you need to
+integrate Sound.js in a similar in your own framework. (Hexi uses
+Chad Engler's brillaint [Resource Loader](https://github.com/englercj/resource-loader) to load and manage files).
+```js
+//Variables to count the number of sound files and the sound files
+//that have been decoded. If both these numbers are the same at
+//some point, then we know all the sounds have been decoded and we
+//can call the `finishLoadingState` function
+let soundsToDecode = 0,
+    soundsDecoded = 0;
+
+//First, create a list of the kind of sound files we want to check
+let soundExtensions = ["wav", "mp3", "ogg", "webm"];
+
+//The `decodeHandler` will run when each sound file is decoded
+let decodeHandler = () => {
+  
+  //Count 1 more sound as having been decoded
+  soundsDecoded += 1;
+
+  //If the decoded sounds match the number of sounds to decode,
+  //then we know all the sounds have been decoded and we can call
+  //`finishLoadingState`
+  if (soundsToDecode === soundsDecoded) {
+    finishLoadingState();
+  }
+};
+
+//Loop through all the loader's resources and look for sound files
+Object.keys(this.loader.resources).forEach(resource => {
+
+  //Find the file extension of the asset
+  let extension = resource.split(".").pop();
+
+  //If one of the resource file extensions matches the sound file
+  //extensions, then we know we have a sound file
+  if(soundExtensions.indexOf(extension) !== -1){
+
+    //Count one more sound to decode
+    soundsToDecode += 1;
+
+    //Create aliases for the sound's `xhr` object and `url` (its
+    //file name)
+    let xhr = this.loader.resources[resource].xhr,
+        url = this.loader.resources[resource].url;
+
+    //Create a sound sprite using`sound.js`'s
+    //`makeSound` function. Notice the 4th argument is the loaded
+    //sound's `xhr` object. Setting the 3rd argument to `false`
+    //means that `makeSound` won't attempt to load the sounds
+    //again. When the sound has been decoded, the `decodeHandler`
+    //(see above!) will be run 
+    let soundSprite = makeSound(url, decodeHandler.bind(this), false, xhr);
+
+    //Get the sound file name
+    soundSprite.name = this.loader.resources[resource].name;
+
+    //Add the sound object to Hexi's `soundObjects` object
+    this.soundObjects[soundSprite.name] = soundSprite;
+  }
+});
+
+//If there are no sound files, we can skip the decoding step and
+//just call `finishLoadingState` directly
+if (soundsToDecode === 0) {
+  finishLoadingState();
+}
+
+```
 If you need any help integrating `Sound.js` with your own custom file
 loading system, create a new issue in this GitHub repository and
 we'll do our best to help :)
