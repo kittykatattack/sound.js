@@ -44,9 +44,6 @@ Thank you, Chris!
       AudioContext.prototype.createDelay = AudioContext.prototype.createDelayNode;
     if (!AudioContext.prototype.hasOwnProperty('createScriptProcessor'))
       AudioContext.prototype.createScriptProcessor = AudioContext.prototype.createJavaScriptNode;
-    if (!AudioContext.prototype.hasOwnProperty('createPeriodicWave'))
-      AudioContext.prototype.createPeriodicWave = AudioContext.prototype.createWaveTable;
-
 
     AudioContext.prototype.internal_createGain = AudioContext.prototype.createGain;
     AudioContext.prototype.createGain = function() {
@@ -68,29 +65,13 @@ Thank you, Chris!
       if (!node.start) {
         node.start = function ( when, offset, duration ) {
           if ( offset || duration )
-            this.noteGrainOn( when || 0, offset, duration );
+            this.noteGrainOn( when, offset, duration );
           else
-            this.noteOn( when || 0 );
-        };
-      } else {
-        node.internal_start = node.start;
-        node.start = function( when, offset, duration ) {
-          if( typeof duration !== 'undefined' )
-            node.internal_start( when || 0, offset, duration );
-          else
-            node.internal_start( when || 0, offset || 0 );
-        };
+            this.noteOn( when );
+        }
       }
-      if (!node.stop) {
-        node.stop = function ( when ) {
-          this.noteOff( when || 0 );
-        };
-      } else {
-        node.internal_stop = node.stop;
-        node.stop = function( when ) {
-          node.internal_stop( when || 0 );
-        };
-      }
+      if (!node.stop)
+        node.stop = node.noteOff;
       fixSetTarget(node.playbackRate);
       return node;
     };
@@ -121,40 +102,16 @@ Thank you, Chris!
       AudioContext.prototype.internal_createOscillator = AudioContext.prototype.createOscillator;
       AudioContext.prototype.createOscillator = function() {
         var node = this.internal_createOscillator();
-        if (!node.start) {
-          node.start = function ( when ) {
-            this.noteOn( when || 0 );
-          };
-        } else {
-          node.internal_start = node.start;
-          node.start = function ( when ) {
-            node.internal_start( when || 0);
-          };
-        }
-        if (!node.stop) {
-          node.stop = function ( when ) {
-            this.noteOff( when || 0 );
-          };
-        } else {
-          node.internal_stop = node.stop;
-          node.stop = function( when ) {
-            node.internal_stop( when || 0 );
-          };
-        }
-        if (!node.setPeriodicWave)
-          node.setPeriodicWave = node.setWaveTable;
+        if (!node.start)
+          node.start = node.noteOn;
+        if (!node.stop)
+          node.stop = node.noteOff;
         fixSetTarget(node.frequency);
         fixSetTarget(node.detune);
         return node;
       };
     }
   }
-
-  if (window.hasOwnProperty('webkitOfflineAudioContext') &&
-      !window.hasOwnProperty('OfflineAudioContext')) {
-    window.OfflineAudioContext = webkitOfflineAudioContext;
-  }
-
 }(window));
 
 /*
