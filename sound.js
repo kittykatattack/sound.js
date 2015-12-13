@@ -186,7 +186,7 @@ call a `setup` method when all the files have finished loading:
     ]);
     sounds.whenLoaded = setup;
 
-You can now access these loaded sounds in you application code like this:
+You can now access these loaded sounds in your application code like this:
 
 var shoot = sounds["sounds/shoot.wav"],
     music = sounds["sounds/music.wav"],
