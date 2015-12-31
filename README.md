@@ -174,7 +174,7 @@ variety of sound effects using thirteen low-level parameters. Here's a model
 for using it, including a description of what each parameter does.
 ```
 soundEffect(
-  frequencyValue,      //The sound's fequency pitch in Hertz
+  frequencyValue,      //The sound's frequency pitch in Hertz
   attack,              //The time, in seconds, to fade the sound in
   decay,               //The time, in seconds, to fade the sound out
   type,                //waveform type: "sine", "triangle", "square", "sawtooth"
@@ -186,7 +186,8 @@ soundEffect(
   randomValue,         //A range, in Hz, within which to randomize the pitch
   dissonance,          //A value in Hz. Creates 2 dissonant frequencies above and below the target pitch
   echo,                //An array: [delayTimeInSeconds, feedbackTimeInSeconds, filterValueInHz]
-  reverb               //An array: [durationInSeconds, decayRateInSeconds, reverse]
+  reverb,              //An array: [durationInSeconds, decayRateInSeconds, reverse]
+  timeout              //Maximum duration of the sound, in seconds
 );
 
 ```
@@ -195,9 +196,14 @@ browser quirks. In the future it might stabilize but, until then use
 it at your peril!)
 The strategy for using the `soundEffect` function is to tinker with
 all these parameters and come up with your own custom library of sound
-effects for games. Think of it as a big sound board with thirteen colourful
+effects for games. Think of it as a big sound board with fourteen colourful
 flashing dials you can play with. And think of yourself as a mad
-scientist and that thirteen is your lucky number!
+scientist and that fourteen is your lucky number!
+
+(Note: The last parameter `timeout` is the maximum duration of the
+sound. It's default value is `2` (2 seconds) which is usually long
+enough for most sound effects, but set it to a higher number if you're
+creating longer sounds.)
 
 ###Shoot sound
 
