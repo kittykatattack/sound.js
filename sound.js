@@ -206,6 +206,14 @@ var sounds = {
   //Assign this when you load the fonts, like this: `assets.whenLoaded = makeSprites;`.
   whenLoaded: undefined,
 
+  //The callback function to run after each asset is loaded
+  onProgress: undefined,
+
+  //The callback function to run if an asset fails to load or decode
+  onFailed: function(source, error) {
+      throw new Error("Audio could not be loaded: " + source);
+  },
+
   //The load method creates and loads all the assets. Use it like this:
   //`assets.load(["images/anyImage.png", "fonts/anyFont.otf"]);`.
 
@@ -229,7 +237,7 @@ var sounds = {
       if (self.audioExtensions.indexOf(extension) !== -1) {
 
         //Create a sound sprite.
-        var soundSprite = makeSound(source, self.loadHandler.bind(self), true, false);
+        var soundSprite = makeSound(source, self.loadHandler.bind(self), true, false, self.onFailed);
 
         //Get the sound file name.
         soundSprite.name = source;
@@ -254,7 +262,10 @@ var sounds = {
   loadHandler: function () {
     var self = this;
     self.loaded += 1;
-    console.log(self.loaded);
+
+    if (self.onProgress) {
+	self.onProgress(100 * self.loaded / self.toLoad);
+    }
 
     //Check whether everything has loaded.
     if (self.toLoad === self.loaded) {
@@ -336,7 +347,7 @@ of you application. (The [Hexi game engine](https://github.com/kittykatattack/he
 
 */
 
-function makeSound(source, loadHandler, loadSound, xhr) {
+function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
 
   //The sound object that this function returns.
   var o = {};
@@ -584,12 +595,12 @@ function makeSound(source, loadHandler, loadSound, xhr) {
 
   //Optionally Load and decode the sound.
   if (loadSound) {
-    this.loadSound(o, source, loadHandler);
+    this.loadSound(o, source, loadHandler, failHandler);
   }
 
   //Optionally, if you've loaded the sound using some other loader, just decode the sound
   if (xhr) {
-    this.decodeAudio(o, xhr, loadHandler);
+    this.decodeAudio(o, xhr, loadHandler, failHandler);
   }
 
   //Return the sound object.
@@ -597,7 +608,7 @@ function makeSound(source, loadHandler, loadSound, xhr) {
 }
 
 //The `loadSound` function loads the sound file using XHR
-function loadSound(o, source, loadHandler) {
+function loadSound(o, source, loadHandler, failHandler) {
   var xhr = new XMLHttpRequest();
 
   //Use xhr to load the sound file.
@@ -606,7 +617,7 @@ function loadSound(o, source, loadHandler) {
 
   //When the sound has finished loading, decode it using the
   //`decodeAudio` function (which you'll see ahead)
-  xhr.addEventListener("load", decodeAudio.bind(this, o, xhr, loadHandler)); 
+  xhr.addEventListener("load", decodeAudio.bind(this, o, xhr, loadHandler, failHandler)); 
 
   //Send the request to load the file.
   xhr.send();
@@ -614,7 +625,7 @@ function loadSound(o, source, loadHandler) {
 
 //The `decodeAudio` function decodes the audio file for you and 
 //launches the `loadHandler` when it's done
-function decodeAudio(o, xhr, loadHandler) {
+function decodeAudio(o, xhr, loadHandler, failHandler) {
 
   //Decode the sound and store a reference to the buffer.
   actx.decodeAudioData(
@@ -630,10 +641,8 @@ function decodeAudio(o, xhr, loadHandler) {
         loadHandler();
       }
     },
-
-    //Throw an error if the sound can't be decoded.
     function(error) {
-      throw new Error("Audio could not be decoded: " + error);
+      if (failHandler) failHandler(o.source, error);
     }
   );
 }
