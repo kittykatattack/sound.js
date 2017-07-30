@@ -205,7 +205,7 @@ sound. It's default value is `2` (2 seconds) which is usually long
 enough for most sound effects, but set it to a higher number if you're
 creating longer sounds.)
 
-###Shoot sound
+### Shoot sound
 
 Here's an
 example of how to use the `soundEffect` function to create a typical laser shoot sound.
@@ -244,7 +244,7 @@ shootSound();
 ```
 It will play immediately.
 
-###Jump sound
+### Jump sound
 
 Let's look at another example. Here's a `jumpSound` function that
 produces a typical platform game character jumping sound.
@@ -277,7 +277,7 @@ the pitch will randomize within a range 100 Hz above and below the target freque
 that the sound's pitch is slightly different every time. This adds organic interest to
 the sound and makes the game world feel alive.
 
-###Explosion sound
+### Explosion sound
 
 You can create a radically different `explosionSound` effect just by
 tweaking these same parameters.
@@ -306,7 +306,7 @@ has a harsh "sawtooth" waveform. But what makes it really work is the
 `dissonance` value of 50. This adds two overtones above and below the
 target frequency; they interfere with each other and the main sound.
 
-###Making music
+### Making music
 
 But it's not just for sound effects! You can use the `soundEffect`
 function to create musical notes, and play them at set intervals.
