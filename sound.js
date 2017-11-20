@@ -35,7 +35,7 @@ Thank you, Chris!
   }
 
   if (window.hasOwnProperty('webkitAudioContext') &&
-      !window.hasOwnProperty('AudioContext')) {
+    !window.hasOwnProperty('AudioContext')) {
     window.AudioContext = webkitAudioContext;
 
     if (!AudioContext.prototype.hasOwnProperty('createGain'))
@@ -49,46 +49,46 @@ Thank you, Chris!
 
 
     AudioContext.prototype.internal_createGain = AudioContext.prototype.createGain;
-    AudioContext.prototype.createGain = function() {
+    AudioContext.prototype.createGain = function () {
       var node = this.internal_createGain();
       fixSetTarget(node.gain);
       return node;
     };
 
     AudioContext.prototype.internal_createDelay = AudioContext.prototype.createDelay;
-    AudioContext.prototype.createDelay = function(maxDelayTime) {
+    AudioContext.prototype.createDelay = function (maxDelayTime) {
       var node = maxDelayTime ? this.internal_createDelay(maxDelayTime) : this.internal_createDelay();
       fixSetTarget(node.delayTime);
       return node;
     };
 
     AudioContext.prototype.internal_createBufferSource = AudioContext.prototype.createBufferSource;
-    AudioContext.prototype.createBufferSource = function() {
+    AudioContext.prototype.createBufferSource = function () {
       var node = this.internal_createBufferSource();
       if (!node.start) {
-        node.start = function ( when, offset, duration ) {
-          if ( offset || duration )
-            this.noteGrainOn( when || 0, offset, duration );
+        node.start = function (when, offset, duration) {
+          if (offset || duration)
+            this.noteGrainOn(when || 0, offset, duration);
           else
-            this.noteOn( when || 0 );
+            this.noteOn(when || 0);
         };
       } else {
         node.internal_start = node.start;
-        node.start = function( when, offset, duration ) {
-          if( typeof duration !== 'undefined' )
-            node.internal_start( when || 0, offset, duration );
+        node.start = function (when, offset, duration) {
+          if (typeof duration !== 'undefined')
+            node.internal_start(when || 0, offset, duration);
           else
-            node.internal_start( when || 0, offset || 0 );
+            node.internal_start(when || 0, offset || 0);
         };
       }
       if (!node.stop) {
-        node.stop = function ( when ) {
-          this.noteOff( when || 0 );
+        node.stop = function (when) {
+          this.noteOff(when || 0);
         };
       } else {
         node.internal_stop = node.stop;
-        node.stop = function( when ) {
-          node.internal_stop( when || 0 );
+        node.stop = function (when) {
+          node.internal_stop(when || 0);
         };
       }
       fixSetTarget(node.playbackRate);
@@ -96,7 +96,7 @@ Thank you, Chris!
     };
 
     AudioContext.prototype.internal_createDynamicsCompressor = AudioContext.prototype.createDynamicsCompressor;
-    AudioContext.prototype.createDynamicsCompressor = function() {
+    AudioContext.prototype.createDynamicsCompressor = function () {
       var node = this.internal_createDynamicsCompressor();
       fixSetTarget(node.threshold);
       fixSetTarget(node.knee);
@@ -108,7 +108,7 @@ Thank you, Chris!
     };
 
     AudioContext.prototype.internal_createBiquadFilter = AudioContext.prototype.createBiquadFilter;
-    AudioContext.prototype.createBiquadFilter = function() {
+    AudioContext.prototype.createBiquadFilter = function () {
       var node = this.internal_createBiquadFilter();
       fixSetTarget(node.frequency);
       fixSetTarget(node.detune);
@@ -117,28 +117,28 @@ Thank you, Chris!
       return node;
     };
 
-    if (AudioContext.prototype.hasOwnProperty( 'createOscillator' )) {
+    if (AudioContext.prototype.hasOwnProperty('createOscillator')) {
       AudioContext.prototype.internal_createOscillator = AudioContext.prototype.createOscillator;
-      AudioContext.prototype.createOscillator = function() {
+      AudioContext.prototype.createOscillator = function () {
         var node = this.internal_createOscillator();
         if (!node.start) {
-          node.start = function ( when ) {
-            this.noteOn( when || 0 );
+          node.start = function (when) {
+            this.noteOn(when || 0);
           };
         } else {
           node.internal_start = node.start;
-          node.start = function ( when ) {
-            node.internal_start( when || 0);
+          node.start = function (when) {
+            node.internal_start(when || 0);
           };
         }
         if (!node.stop) {
-          node.stop = function ( when ) {
-            this.noteOff( when || 0 );
+          node.stop = function (when) {
+            this.noteOff(when || 0);
           };
         } else {
           node.internal_stop = node.stop;
-          node.stop = function( when ) {
-            node.internal_stop( when || 0 );
+          node.stop = function (when) {
+            node.internal_stop(when || 0);
           };
         }
         if (!node.setPeriodicWave)
@@ -151,7 +151,7 @@ Thank you, Chris!
   }
 
   if (window.hasOwnProperty('webkitOfflineAudioContext') &&
-      !window.hasOwnProperty('OfflineAudioContext')) {
+    !window.hasOwnProperty('OfflineAudioContext')) {
     window.OfflineAudioContext = webkitOfflineAudioContext;
   }
 
@@ -162,7 +162,7 @@ Define the audio context
 ------------------------
 
 All this code uses a single `AudioContext` If you want to use any of these functions
-independently of this file, make sure that have an `AudioContext` called `actx`. 
+independently of this file, make sure that have an `AudioContext` called `actx`.
 */
 var actx = new AudioContext();
 
@@ -170,17 +170,17 @@ var actx = new AudioContext();
 sounds
 ------
 
-`sounds` is an object that you can use to store all your loaded sound fles. 
+`sounds` is an object that you can use to store all your loaded sound fles.
 It also has a helpful `load` method that manages asset loading. You can load sounds at
 any time during the game by using the `sounds.load` method. You don't have to use
-the `sounds` object or its `load` method, but it's a really convenient way to 
+the `sounds` object or its `load` method, but it's a really convenient way to
 work with sound file assets.
 
-Here's how could use the `sound` object to load three sound files from a `sounds` folder and 
+Here's how could use the `sound` object to load three sound files from a `sounds` folder and
 call a `setup` method when all the files have finished loading:
 
     sounds.load([
-      "sounds/shoot.wav", 
+      "sounds/shoot.wav",
       "sounds/music.wav",
       "sounds/bounce.mp3"
     ]);
@@ -210,14 +210,14 @@ var sounds = {
   onProgress: undefined,
 
   //The callback function to run if an asset fails to load or decode
-  onFailed: function(source, error) {
-      throw new Error("Audio could not be loaded: " + source);
+  onFailed: function (source, error) {
+    throw new Error("Audio could not be loaded: " + source);
   },
 
   //The load method creates and loads all the assets. Use it like this:
   //`assets.load(["images/anyImage.png", "fonts/anyFont.otf"]);`.
 
-  load: function(sources) {
+  load: function (sources) {
     console.log("Loading sounds..");
 
     //Get a reference to this asset object so we can
@@ -226,7 +226,7 @@ var sounds = {
 
     //Find the number of files that need to be loaded.
     self.toLoad = sources.length;
-    sources.forEach(function(source){
+    sources.forEach(function (source) {
 
       //Find the file extension of the asset.
       var extension = source.split('.').pop();
@@ -259,12 +259,12 @@ var sounds = {
 
   //#### loadHandler
   //The `loadHandler` will be called each time an asset finishes loading.
-  loadHandler: function () {
+  loadHandler: function (source) {
     var self = this;
     self.loaded += 1;
 
     if (self.onProgress) {
-	self.onProgress(100 * self.loaded / self.toLoad);
+      self.onProgress(100 * self.loaded / self.toLoad, { url: source });
     }
 
     //Check whether everything has loaded.
@@ -277,7 +277,9 @@ var sounds = {
       //later if we want to.
       self.toLoad = 0;
       self.loaded = 0;
-      self.whenLoaded();
+      if (self.whenLoaded) {
+        self.whenLoaded();
+      }
     }
   }
 };
@@ -288,15 +290,15 @@ makeSound
 
 `makeSound` is the function you want to use to load and play sound files.
 It creates and returns and WebAudio sound object with lots of useful methods you can
-use to control the sound. 
+use to control the sound.
 You can use it to load a sound like this:
 
     var anySound = makeSound("sounds/anySound.mp3", loadHandler);
 
 
 The code above will load the sound and then call the `loadHandler`
-when the sound has finished loading. 
-(However, it's more convenient to load the sound file using 
+when the sound has finished loading.
+(However, it's more convenient to load the sound file using
 the `sounds.load` method described above, so I don't recommend loading sounds
 like this unless you need more low-level control.)
 
@@ -314,8 +316,8 @@ After the sound has been loaded you can access and use it like this:
       anySound.setEcho(0.2, 0.2, 0);
       anySound.playbackRate = 0.5;
     }
-   
-For advanced configurations, you can optionally supply `makeSound` with optional 3rd and 
+
+For advanced configurations, you can optionally supply `makeSound` with optional 3rd and
 4th arguments:
 
    var anySound = makeSound(source, loadHandler, loadTheSound?, xhrObject);
@@ -325,7 +327,7 @@ from being loaded. You would only want to set it to `false` like this if you wer
 using another file loading library to load the sound, and didn't want it to be loaded
 twice.
 
-`xhrObject`, the optional 4th argument, is the XHR object that was used to load the sound. Again, you 
+`xhrObject`, the optional 4th argument, is the XHR object that was used to load the sound. Again, you
 would only supply this if you were using another file loading library to load the sound,
 and that library had generated its own XHR object. If you supply the `xhr` argument, `makeSound`
 will skip the file loading step (because you've already done that), but still decode the audio buffer for you.
@@ -395,9 +397,9 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
   //Reverb properties
   o.reverb = false;
   o.reverbImpulse = null;
-  
+
   //The sound object's methods.
-  o.play = function() {
+  o.play = function () {
 
     //Set the start time (it will be `0` when the sound
     //first starts.
@@ -419,7 +421,7 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
     //If there's no reverb, bypass the convolverNode
     if (o.reverb === false) {
       o.volumeNode.connect(o.panNode);
-    } 
+    }
 
     //If there is reverb, connect the `convolverNode` and apply
     //the impulse response
@@ -428,7 +430,7 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
       o.convolverNode.connect(o.panNode);
       o.convolverNode.buffer = o.reverbImpulse;
     }
-    
+
     //Connect the `panNode` to the destination to complete the chain.
     o.panNode.connect(actx.destination);
 
@@ -471,7 +473,7 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
     o.playing = true;
   };
 
-  o.pause = function() {
+  o.pause = function () {
     //Pause the sound if it's playing, and calculate the
     //`startOffset` to save the current position.
     if (o.playing) {
@@ -481,7 +483,7 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
     }
   };
 
-  o.restart = function() {
+  o.restart = function () {
     //Stop the sound if it's playing, reset the start and offset times,
     //then call the `play` method again.
     if (o.playing) {
@@ -491,7 +493,7 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
     o.play();
   };
 
-  o.playFrom = function(value) {
+  o.playFrom = function (value) {
     if (o.playing) {
       o.soundNode.stop(0);
     }
@@ -499,7 +501,7 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
     o.play();
   };
 
-  o.setEcho = function(delayValue, feedbackValue, filterValue) {
+  o.setEcho = function (delayValue, feedbackValue, filterValue) {
     if (delayValue === undefined) delayValue = 0.3;
     if (feedbackValue === undefined) feedbackValue = 0.3;
     if (filterValue === undefined) filterValue = 0;
@@ -509,7 +511,7 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
     o.echo = true;
   };
 
-  o.setReverb = function(duration, decay, reverse) {
+  o.setReverb = function (duration, decay, reverse) {
     if (duration === undefined) duration = 2;
     if (decay === undefined) decay = 2;
     if (reverse === undefined) reverse = false;
@@ -521,7 +523,7 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
   //The first argument is the volume that the sound should
   //fade to, and the second value is the duration, in seconds,
   //that the fade should last.
-  o.fade = function(endValue, durationInSeconds) {
+  o.fade = function (endValue, durationInSeconds) {
     if (o.playing) {
       o.volumeNode.gain.linearRampToValueAtTime(
         o.volumeNode.gain.value, actx.currentTime
@@ -533,27 +535,27 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
   };
 
   //Fade a sound in, from an initial volume level of zero.
-  o.fadeIn = function(durationInSeconds) {
-    
+  o.fadeIn = function (durationInSeconds) {
+
     //Set the volume to 0 so that you can fade
     //in from silence
     o.volumeNode.gain.value = 0;
     o.fade(1, durationInSeconds);
-  
+
   };
 
   //Fade a sound out, from its current volume level to zero.
-  o.fadeOut = function(durationInSeconds) {
+  o.fadeOut = function (durationInSeconds) {
     o.fade(0, durationInSeconds);
   };
-  
+
   //Volume and pan getters/setters.
   Object.defineProperties(o, {
     volume: {
-      get: function() {
+      get: function () {
         return o.volumeValue;
       },
-      set: function(value) {
+      set: function (value) {
         o.volumeNode.gain.value = value;
         o.volumeValue = value;
       },
@@ -561,19 +563,19 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
     },
 
     //The pan node uses the high-efficiency stereo panner, if it's
-    //available. But, because this is a new addition to the 
+    //available. But, because this is a new addition to the
     //WebAudio spec, it might not be available on all browsers.
     //So the code checks for this and uses the older 3D panner
     //if 2D isn't available.
     pan: {
-      get: function() {
+      get: function () {
         if (!actx.createStereoPanner) {
           return o.panValue;
         } else {
           return o.panNode.pan.value;
         }
       },
-      set: function(value) {
+      set: function (value) {
         if (!actx.createStereoPanner) {
           //Panner objects accept x, y and z coordinates for 3D
           //sound. However, because we're only doing 2D left/right
@@ -581,8 +583,8 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
           //the first one. However, for a natural effect, the z
           //value also has to be set proportionately.
           var x = value,
-              y = 0,
-              z = 1 - Math.abs(x);
+            y = 0,
+            z = 1 - Math.abs(x);
           o.panNode.setPosition(x, y, z);
           o.panValue = value;
         } else {
@@ -617,20 +619,20 @@ function loadSound(o, source, loadHandler, failHandler) {
 
   //When the sound has finished loading, decode it using the
   //`decodeAudio` function (which you'll see ahead)
-  xhr.addEventListener("load", decodeAudio.bind(this, o, xhr, loadHandler, failHandler)); 
+  xhr.addEventListener("load", decodeAudio.bind(this, o, xhr, loadHandler, failHandler));
 
   //Send the request to load the file.
   xhr.send();
 }
 
-//The `decodeAudio` function decodes the audio file for you and 
+//The `decodeAudio` function decodes the audio file for you and
 //launches the `loadHandler` when it's done
 function decodeAudio(o, xhr, loadHandler, failHandler) {
 
   //Decode the sound and store a reference to the buffer.
   actx.decodeAudioData(
     xhr.response,
-    function(buffer) {
+    function (buffer) {
       o.buffer = buffer;
       o.hasLoaded = true;
 
@@ -638,10 +640,10 @@ function decodeAudio(o, xhr, loadHandler, failHandler) {
       //If you have a load manager in your game, call it here so that
       //the sound is registered as having loaded.
       if (loadHandler) {
-        loadHandler();
+        loadHandler(o.source);
       }
     },
-    function(error) {
+    function (error) {
       if (failHandler) failHandler(o.source, error);
     }
   );
@@ -731,7 +733,7 @@ function soundEffect(
   if (!actx.createStereoPanner) {
     pan.setPosition(panValue, 0, 1 - Math.abs(panValue));
   } else {
-    pan.pan.value = panValue; 
+    pan.pan.value = panValue;
   }
   oscillator.type = type;
 
@@ -740,7 +742,7 @@ function soundEffect(
   //specified by `frequencyValue`. The random pitch will be either
   //above or below the target frequency.
   var frequency;
-  var randomInt = function(min, max){
+  var randomInt = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min
   };
   if (randomValue > 0) {
@@ -765,7 +767,7 @@ function soundEffect(
   play(oscillator);
 
   //The helper functions:
-  
+
   function addReverb(volumeNode) {
     var convolver = actx.createConvolver();
     convolver.buffer = impulseResponse(reverb[0], reverb[1], reverb[2], actx);
@@ -777,8 +779,8 @@ function soundEffect(
 
     //Create the nodes
     var feedback = actx.createGain(),
-        delay = actx.createDelay(),
-        filter = actx.createBiquadFilter();
+      delay = actx.createDelay(),
+      filter = actx.createBiquadFilter();
 
     //Set their values (delay time, feedback time and filter frequency)
     delay.delayTime.value = echo[0];
@@ -841,11 +843,11 @@ function soundEffect(
     //If `reverse` is true, make the sound drop in pitch
     if (!reverse) {
       oscillatorNode.frequency.linearRampToValueAtTime(
-        frequency, 
+        frequency,
         actx.currentTime + wait
       );
       oscillatorNode.frequency.linearRampToValueAtTime(
-        frequency - pitchBendAmount, 
+        frequency - pitchBendAmount,
         actx.currentTime + wait + attack + decay
       );
     }
@@ -854,11 +856,11 @@ function soundEffect(
     //jumping sounds
     else {
       oscillatorNode.frequency.linearRampToValueAtTime(
-        frequency, 
+        frequency,
         actx.currentTime + wait
       );
       oscillatorNode.frequency.linearRampToValueAtTime(
-        frequency + pitchBendAmount, 
+        frequency + pitchBendAmount,
         actx.currentTime + wait + attack + decay
       );
     }
@@ -869,9 +871,9 @@ function soundEffect(
 
     //Create two more oscillators and gain nodes
     var d1 = actx.createOscillator(),
-        d2 = actx.createOscillator(),
-        d1Volume = actx.createGain(),
-        d2Volume = actx.createGain();
+      d2 = actx.createOscillator(),
+      d1Volume = actx.createGain(),
+      d2Volume = actx.createGain();
 
     //Set the volume to the `volumeValue`
     d1Volume.gain.value = volumeValue;
@@ -923,9 +925,9 @@ function soundEffect(
   function play(node) {
     node.start(actx.currentTime + wait);
 
-    //Oscillators have to be stopped otherwise they accumulate in 
+    //Oscillators have to be stopped otherwise they accumulate in
     //memory and tax the CPU. They'll be stopped after a default
-    //timeout of 2 seconds, which should be enough for most sound 
+    //timeout of 2 seconds, which should be enough for most sound
     //effects. Override this in the `soundEffect` parameters if you
     //need a longer sound
     node.stop(actx.currentTime + wait + 2);
@@ -936,8 +938,8 @@ function soundEffect(
 impulseResponse
 ---------------
 
-The `makeSound` and `soundEffect` functions uses `impulseResponse`  to help create an optional reverb effect.  
-It simulates a model of sound reverberation in an acoustic space which 
+The `makeSound` and `soundEffect` functions uses `impulseResponse`  to help create an optional reverb effect.
+It simulates a model of sound reverberation in an acoustic space which
 a convolver node can blend with the source sound. Make sure to include this function along with `makeSound`
 and `soundEffect` if you need to use the reverb feature.
 */
@@ -953,11 +955,11 @@ function impulseResponse(duration, decay, reverse, actx) {
   //Use `getChannelData` to initialize empty arrays to store sound data for
   //the left and right channels.
   var left = impulse.getChannelData(0),
-      right = impulse.getChannelData(1);
+    right = impulse.getChannelData(1);
 
   //Loop through each sample-frame and fill the channel
   //data with random noise.
-  for (var i = 0; i < length; i++){
+  for (var i = 0; i < length; i++) {
 
     //Apply the reverse effect, if `reverse` is `true`.
     var n;
@@ -982,7 +984,7 @@ function impulseResponse(duration, decay, reverse, actx) {
 keyboard
 --------
 
-This isn't really necessary - I just included it for fun to help with the 
+This isn't really necessary - I just included it for fun to help with the
 examples in the `index.html` files.
 The `keyboard` helper function creates `key` objects
 that listen for keyboard events. Create a new key object like
@@ -1000,7 +1002,7 @@ Then assign `press` and `release` methods like this:
     };
 
 Keyboard objects also have `isDown` and `isUp` Booleans that you can check.
-This is so much easier than having to write out tedious keyboard even capture 
+This is so much easier than having to write out tedious keyboard even capture
 code from scratch.
 
 Like I said, the `keyboard` function has nothing to do with generating sounds,
@@ -1015,7 +1017,7 @@ function keyboard(keyCode) {
   key.press = undefined;
   key.release = undefined;
   //The `downHandler`
-  key.downHandler = function(event) {
+  key.downHandler = function (event) {
     if (event.keyCode === key.code) {
       if (key.isUp && key.press) key.press();
       key.isDown = true;
@@ -1025,7 +1027,7 @@ function keyboard(keyCode) {
   };
 
   //The `upHandler`
-  key.upHandler = function(event) {
+  key.upHandler = function (event) {
     if (event.keyCode === key.code) {
       if (key.isDown && key.release) key.release();
       key.isDown = false;

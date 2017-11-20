@@ -51,6 +51,13 @@ sounds.load([
 ]);
 
 //Assign the callback function that should run
+//each time a file loaded, just like PIXI.js
+sounds.onProgress = function (progress, res) {
+  console.log('Total ' + progress + ' file(s) loaded.');
+  console.log('File ' + res.url + ' just finished loading.');
+};
+
+//Assign the callback function that should run
 //when the sounds have loaded
 sounds.whenLoaded = setup;
 ```
