@@ -351,7 +351,7 @@ of you application. (The [Hexi game engine](https://github.com/kittykatattack/he
 
 */
 
-function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
+function makeSound(source, loadHandler, shouldLoadSound, xhr, failHandler) {
 
   //The sound object that this function returns.
   var o = {};
@@ -598,18 +598,19 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
   });
 
   //Optionally Load and decode the sound.
-  if (loadSound) {
-    this.loadSound(o, source, loadHandler, failHandler);
+  if (shouldLoadSound) {
+    loadSound(o, source, loadHandler, failHandler);
   }
 
   //Optionally, if you've loaded the sound using some other loader, just decode the sound
   if (xhr) {
-    this.decodeAudio(o, xhr, loadHandler, failHandler);
+    decodeAudio(o, xhr, loadHandler, failHandler);
   }
 
   //Return the sound object.
   return o;
 }
+exports.makeSound = makeSound;
 
 //The `loadSound` function loads the sound file using XHR
 function loadSound(o, source, loadHandler, failHandler) {
@@ -626,6 +627,7 @@ function loadSound(o, source, loadHandler, failHandler) {
   //Send the request to load the file.
   xhr.send();
 }
+exports.loadSound = loadSound;
 
 //The `decodeAudio` function decodes the audio file for you and
 //launches the `loadHandler` when it's done
@@ -650,8 +652,7 @@ function decodeAudio(o, xhr, loadHandler, failHandler) {
     }
   );
 }
-exports.makeSound = makeSound;
-
+exports.decodeAudio = decodeAudio;
 
 /*
 soundEffect
