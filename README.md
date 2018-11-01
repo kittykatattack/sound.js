@@ -30,7 +30,7 @@ Installation
 -------------
 
 Just link to the `sound.js` file with a `<script>` tag:
-```
+```html
 <script src="sound.js"></script>
 ```
 Or just copy/paste whichever functions you need from the `sound.js`
@@ -42,7 +42,7 @@ Loading sound files
 The best way to load sound files is to use the `sounds` object's
 `load` method. List the each sound file's path and name in the `sound.load`
 method's array. Then assign a callback function to `sounds.whenLoaded`.
-```
+```js
 //Load the sounds
 sounds.load([
   "sounds/shoot.wav", 
@@ -56,7 +56,7 @@ sounds.whenLoaded = setup;
 ```
 After the sounds have loaded, the `setup` function will run. Use the
 `setup` function to initialize your sounds.
-```
+```js
 function setup() {
   //Initialize sounds here
 }
@@ -69,12 +69,12 @@ Initializing loaded sounds
 
 After a sound file is loaded using the `sounds.load` method, you can access
 it as a property of the `sounds` object like this:
-```
+```js
 sounds["sounds/music.wav"]
 ```
 Create variable references to all the sounds you want to use so that
 they're easier to work with:
-```
+```js
 var shoot = sounds["sounds/shoot.wav"],
     music = sounds["sounds/music.wav"],
     bounce = sounds["sounds/bounce.mp3"];
@@ -87,7 +87,7 @@ Playing and controlling loaded sounds
 
 You can play, pause, loop and restart sounds as well as set their volume and speaker
 pan settings. You can also fade sounds in or out. Here's how:
-```
+```js
   //Play the sound
   music.play();
 
@@ -123,7 +123,7 @@ pan settings. You can also fade sounds in or out. Here's how:
 Use `playbackRate` to change the speed at which the sound plays back.
 A value of 0.5 will make the sound play at half speed. A value of 2
 will make it play at double speed. 1 is normal speed.
-```
+```js
 music.playbackRate = 0.5;
 ```
 Changing a sound's playback rate doesn't affect its pitch.
@@ -132,7 +132,7 @@ Changing a sound's playback rate doesn't affect its pitch.
 
 Use the `setEcho` method to set the sound's optional echo effect.
 `setEcho` takes three arguments: `delay`, `feedback` and `filter`.
-```
+```js
 bounce.setEcho(0.2, 0.3, 1000);
 ```
 `delay` and `feedback` are times, in seconds. `delay`determines how much
@@ -144,14 +144,14 @@ with each repetition for a more organic effect. Set `filter` to `0` to
 disable it. If you ever need to switch off a sound's echo effect, set
 the sound's
 `echo` property to `false`
-```
+```js
 bounce.echo = false;
 ```
 ### Add reverb
 
 Set a sound's reverb effect using `setReverb`. `setReverb` takes 3
 arguments: `duration`, `decay`, and `reverse`. 
-```
+```js
 music.setReverb(2, 2, false);
 ```
 `duration` and `decay` are times, in seconds, that determine how
@@ -172,7 +172,7 @@ Generating sound effects and music
 Use the versatile `soundEffect` function to create an almost limitless
 variety of sound effects using thirteen low-level parameters. Here's a model
 for using it, including a description of what each parameter does.
-```
+```js
 soundEffect(
   frequencyValue,      //The sound's frequency pitch in Hertz
   attack,              //The time, in seconds, to fade the sound in
@@ -209,7 +209,7 @@ creating longer sounds.)
 
 Here's an
 example of how to use the `soundEffect` function to create a typical laser shoot sound.
-```
+```js
 function shootSound() {
   soundEffect(
     1046.5,           //frequency
@@ -239,7 +239,7 @@ tone.
 Because the `soundEffect` function is wrapped in a custom `shootSound`
 function, you can play the effect at any time in your application code
 like this:
-```
+```js
 shootSound();
 ```
 It will play immediately.
@@ -248,7 +248,7 @@ It will play immediately.
 
 Let's look at another example. Here's a `jumpSound` function that
 produces a typical platform game character jumping sound.
-```
+```js
 function jumpSound() {
   soundEffect(
     523.25,       //frequency
@@ -281,7 +281,7 @@ the sound and makes the game world feel alive.
 
 You can create a radically different `explosionSound` effect just by
 tweaking these same parameters.
-```
+```js
 function explosionSound() {
   soundEffect(
     16,          //frequency
@@ -315,7 +315,7 @@ and high D) in a
 rising pitch sequence. It's typical of the kind of musical motif you might
 hear when a game character scores some bonus points, like picking up
 stars or coins. (When you hear this sound you might have a flashback to 1985!)
-```
+```js
 function bonusSound() {
   //D
   soundEffect(587.33, 0, 0.2, "square", 1, 0, 0);
