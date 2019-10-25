@@ -157,6 +157,8 @@ Thank you, Chris!
 
 }(window));
 
+var exports = module.exports = {};
+
 /*
 Define the audio context
 ------------------------
@@ -165,6 +167,7 @@ All this code uses a single `AudioContext` If you want to use any of these funct
 independently of this file, make sure that have an `AudioContext` called `actx`.
 */
 var actx = new AudioContext();
+exports.actx = actx;
 
 /*
 sounds
@@ -283,6 +286,7 @@ var sounds = {
     }
   }
 };
+exports.sounds = sounds;
 
 /*
 makeSound
@@ -349,7 +353,7 @@ of you application. (The [Hexi game engine](https://github.com/kittykatattack/he
 
 */
 
-function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
+function makeSound(source, loadHandler, shouldLoadSound, xhr, failHandler) {
 
   //The sound object that this function returns.
   var o = {};
@@ -535,7 +539,8 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
   };
 
   //Fade a sound in, from an initial volume level of zero.
-  o.fadeIn = function (durationInSeconds) {
+
+  o.fadeIn = function(durationInSeconds) {
 
     //Set the volume to 0 so that you can fade
     //in from silence
@@ -596,18 +601,19 @@ function makeSound(source, loadHandler, loadSound, xhr, failHandler) {
   });
 
   //Optionally Load and decode the sound.
-  if (loadSound) {
-    this.loadSound(o, source, loadHandler, failHandler);
+  if (shouldLoadSound) {
+    loadSound(o, source, loadHandler, failHandler);
   }
 
   //Optionally, if you've loaded the sound using some other loader, just decode the sound
   if (xhr) {
-    this.decodeAudio(o, xhr, loadHandler, failHandler);
+    decodeAudio(o, xhr, loadHandler, failHandler);
   }
 
   //Return the sound object.
   return o;
 }
+exports.makeSound = makeSound;
 
 //The `loadSound` function loads the sound file using XHR
 function loadSound(o, source, loadHandler, failHandler) {
@@ -624,6 +630,7 @@ function loadSound(o, source, loadHandler, failHandler) {
   //Send the request to load the file.
   xhr.send();
 }
+exports.loadSound = loadSound;
 
 //The `decodeAudio` function decodes the audio file for you and
 //launches the `loadHandler` when it's done
@@ -648,7 +655,7 @@ function decodeAudio(o, xhr, loadHandler, failHandler) {
     }
   );
 }
-
+exports.decodeAudio = decodeAudio;
 
 /*
 soundEffect
@@ -933,6 +940,7 @@ function soundEffect(
     node.stop(actx.currentTime + wait + 2);
   }
 }
+exports.soundEffect = soundEffect;
 
 /*
 impulseResponse
@@ -978,6 +986,7 @@ function impulseResponse(duration, decay, reverse, actx) {
   //Return the `impulse`.
   return impulse;
 }
+exports.impulseResponse = impulseResponse;
 
 
 /*
@@ -1045,4 +1054,4 @@ function keyboard(keyCode) {
   );
   return key;
 }
-
+exports.keyboard = keyboard;
