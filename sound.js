@@ -1015,7 +1015,7 @@ code from scratch.
 
 Like I said, the `keyboard` function has nothing to do with generating sounds,
 so just delete it if you don't want it!
-*/
+
 
 function keyboard(keyCode) {
   var key = {};
@@ -1054,3 +1054,4 @@ function keyboard(keyCode) {
   return key;
 }
 exports.keyboard = keyboard;
+*/
