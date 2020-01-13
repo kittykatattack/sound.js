@@ -24,7 +24,7 @@ Thank you, Chris!
 
 */
 
-(function (global, exports, perf) {
+(function (global) {
   'use strict';
 
   function fixSetTarget(param) {
@@ -157,7 +157,6 @@ Thank you, Chris!
 
 }(window));
 
-var exports = module.exports = {};
 
 /*
 Define the audio context
@@ -167,7 +166,7 @@ All this code uses a single `AudioContext` If you want to use any of these funct
 independently of this file, make sure that have an `AudioContext` called `actx`.
 */
 var actx = new AudioContext();
-exports.actx = actx;
+window.actx = actx;
 
 /*
 sounds
@@ -286,7 +285,7 @@ var sounds = {
     }
   }
 };
-exports.sounds = sounds;
+window.sounds = sounds;
 
 /*
 makeSound
@@ -613,7 +612,7 @@ function makeSound(source, loadHandler, shouldLoadSound, xhr, failHandler) {
   //Return the sound object.
   return o;
 }
-exports.makeSound = makeSound;
+window.makeSound = makeSound;
 
 //The `loadSound` function loads the sound file using XHR
 function loadSound(o, source, loadHandler, failHandler) {
@@ -630,7 +629,7 @@ function loadSound(o, source, loadHandler, failHandler) {
   //Send the request to load the file.
   xhr.send();
 }
-exports.loadSound = loadSound;
+window.loadSound = loadSound;
 
 //The `decodeAudio` function decodes the audio file for you and
 //launches the `loadHandler` when it's done
@@ -655,7 +654,7 @@ function decodeAudio(o, xhr, loadHandler, failHandler) {
     }
   );
 }
-exports.decodeAudio = decodeAudio;
+window.decodeAudio = decodeAudio;
 
 /*
 soundEffect
@@ -940,7 +939,7 @@ function soundEffect(
     node.stop(actx.currentTime + wait + 2);
   }
 }
-exports.soundEffect = soundEffect;
+window.soundEffect = soundEffect;
 
 /*
 impulseResponse
@@ -986,7 +985,7 @@ function impulseResponse(duration, decay, reverse, actx) {
   //Return the `impulse`.
   return impulse;
 }
-exports.impulseResponse = impulseResponse;
+window.impulseResponse = impulseResponse;
 
 
 /*
@@ -1016,7 +1015,7 @@ code from scratch.
 
 Like I said, the `keyboard` function has nothing to do with generating sounds,
 so just delete it if you don't want it!
-*/
+
 
 function keyboard(keyCode) {
   var key = {};
@@ -1055,3 +1054,4 @@ function keyboard(keyCode) {
   return key;
 }
 exports.keyboard = keyboard;
+*/
