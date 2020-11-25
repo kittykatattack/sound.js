@@ -1,7 +1,16 @@
 
+
 /*
 Sound.js
-===============
+
+
+Keon-Kim-0 pr: 
+
+-updated declaration to match modern standards (no more var) to free up global memory
+-optimized addReverb function (impulseresponse) to alleviate stutter when multiple 
+  instances of reverb is happening simultaneously.
+===================================================================================================
+===================================================================================================
 
 A complete micro library of useful, modular functions that help you load, play, control
 and generate sound effects and music for games and interactive applications. All the
@@ -23,12 +32,11 @@ It's included here.
 Thank you, Chris!
 
 */
-
 (function (global, exports, perf) {
   'use strict';
 
   function fixSetTarget(param) {
-    if (!param)	// if NYI, just return
+    if (!param)
       return;
     if (!param.setTargetAtTime)
       param.setTargetAtTime = param.setTargetValueAtTime;
@@ -36,7 +44,7 @@ Thank you, Chris!
 
   if (window.hasOwnProperty('webkitAudioContext') &&
     !window.hasOwnProperty('AudioContext')) {
-    window.AudioContext = webkitAudioContext;
+    window.AudioContext = window.webkitAudioContext;
 
     if (!AudioContext.prototype.hasOwnProperty('createGain'))
       AudioContext.prototype.createGain = AudioContext.prototype.createGainNode;
@@ -50,21 +58,21 @@ Thank you, Chris!
 
     AudioContext.prototype.internal_createGain = AudioContext.prototype.createGain;
     AudioContext.prototype.createGain = function () {
-      var node = this.internal_createGain();
+      let node = this.internal_createGain();
       fixSetTarget(node.gain);
       return node;
     };
 
     AudioContext.prototype.internal_createDelay = AudioContext.prototype.createDelay;
     AudioContext.prototype.createDelay = function (maxDelayTime) {
-      var node = maxDelayTime ? this.internal_createDelay(maxDelayTime) : this.internal_createDelay();
+      let node = maxDelayTime ? this.internal_createDelay(maxDelayTime) : this.internal_createDelay();
       fixSetTarget(node.delayTime);
       return node;
     };
 
     AudioContext.prototype.internal_createBufferSource = AudioContext.prototype.createBufferSource;
     AudioContext.prototype.createBufferSource = function () {
-      var node = this.internal_createBufferSource();
+      let node = this.internal_createBufferSource();
       if (!node.start) {
         node.start = function (when, offset, duration) {
           if (offset || duration)
@@ -97,7 +105,7 @@ Thank you, Chris!
 
     AudioContext.prototype.internal_createDynamicsCompressor = AudioContext.prototype.createDynamicsCompressor;
     AudioContext.prototype.createDynamicsCompressor = function () {
-      var node = this.internal_createDynamicsCompressor();
+      let node = this.internal_createDynamicsCompressor();
       fixSetTarget(node.threshold);
       fixSetTarget(node.knee);
       fixSetTarget(node.ratio);
@@ -109,7 +117,7 @@ Thank you, Chris!
 
     AudioContext.prototype.internal_createBiquadFilter = AudioContext.prototype.createBiquadFilter;
     AudioContext.prototype.createBiquadFilter = function () {
-      var node = this.internal_createBiquadFilter();
+      let node = this.internal_createBiquadFilter();
       fixSetTarget(node.frequency);
       fixSetTarget(node.detune);
       fixSetTarget(node.Q);
@@ -120,7 +128,7 @@ Thank you, Chris!
     if (AudioContext.prototype.hasOwnProperty('createOscillator')) {
       AudioContext.prototype.internal_createOscillator = AudioContext.prototype.createOscillator;
       AudioContext.prototype.createOscillator = function () {
-        var node = this.internal_createOscillator();
+        let node = this.internal_createOscillator();
         if (!node.start) {
           node.start = function (when) {
             this.noteOn(when || 0);
@@ -152,12 +160,12 @@ Thank you, Chris!
 
   if (window.hasOwnProperty('webkitOfflineAudioContext') &&
     !window.hasOwnProperty('OfflineAudioContext')) {
-    window.OfflineAudioContext = webkitOfflineAudioContext;
+    window.OfflineAudioContext = window.webkitOfflineAudioContext;
   }
 
 }(window));
 
-var exports = module.exports = {};
+let exports = module.exports = {};
 
 /*
 Define the audio context
@@ -166,9 +174,9 @@ Define the audio context
 All this code uses a single `AudioContext` If you want to use any of these functions
 independently of this file, make sure that have an `AudioContext` called `actx`.
 */
-var actx = new AudioContext();
-exports.actx = actx;
 
+let actx = new AudioContext();
+exports.actx = actx;
 /*
 sounds
 ------
@@ -197,54 +205,46 @@ var shoot = sounds["sounds/shoot.wav"],
 
 */
 
-var sounds = {
+
+let sounds = {
   //Properties to help track the assets being loaded.
   toLoad: 0,
   loaded: 0,
 
   //File extensions for different types of sounds.
   audioExtensions: ["mp3", "ogg", "wav", "webm"],
-
   //The callback function that should run when all assets have loaded.
   //Assign this when you load the fonts, like this: `assets.whenLoaded = makeSprites;`.
   whenLoaded: undefined,
 
   //The callback function to run after each asset is loaded
   onProgress: undefined,
-
   //The callback function to run if an asset fails to load or decode
   onFailed: function (source, error) {
     throw new Error("Audio could not be loaded: " + source);
   },
-
   //The load method creates and loads all the assets. Use it like this:
   //`assets.load(["images/anyImage.png", "fonts/anyFont.otf"]);`.
 
   load: function (sources) {
     console.log("Loading sounds..");
-
     //Get a reference to this asset object so we can
     //refer to it in the `forEach` loop ahead.
-    var self = this;
-
+    let self = this;
     //Find the number of files that need to be loaded.
     self.toLoad = sources.length;
     sources.forEach(function (source) {
-
       //Find the file extension of the asset.
-      var extension = source.split('.').pop();
-
+      let extension = source.split('.').pop();
       //#### Sounds
       //Load audio files that have file extensions that match
       //the `audioExtensions` array.
       if (self.audioExtensions.indexOf(extension) !== -1) {
 
         //Create a sound sprite.
-        var soundSprite = makeSound(source, self.loadHandler.bind(self), true, false, self.onFailed);
-
+        let soundSprite = makeSound(source, self.loadHandler.bind(self), true, false, self.onFailed);
         //Get the sound file name.
         soundSprite.name = source;
-
         //If you just want to extract the file name with the
         //extension, you can do it like this:
         //soundSprite.name = source.split("/").pop();
@@ -252,32 +252,29 @@ var sounds = {
         //we can access it like this: `assets["sounds/sound.mp3"]`.
         self[soundSprite.name] = soundSprite;
       }
-
       //Display a message if the file type isn't recognized.
       else {
         console.log("File type not recognized: " + source);
       }
     });
   },
-
   //#### loadHandler
   //The `loadHandler` will be called each time an asset finishes loading.
   loadHandler: function (source) {
-    var self = this;
+    let self = this;
     self.loaded += 1;
-
+    //Check whether everything has loaded.
     if (self.onProgress) {
       self.onProgress(100 * self.loaded / self.toLoad, { url: source });
     }
-
-    //Check whether everything has loaded.
+    //If it has, run the callback function that was assigned to the `whenLoaded` property
     if (self.toLoad === self.loaded) {
 
-      //If it has, run the callback function that was assigned to the `whenLoaded` property
       console.log("Sounds finished loading");
 
       //Reset `loaded` and `toLoaded` so we can load more assets
       //later if we want to.
+
       self.toLoad = 0;
       self.loaded = 0;
       if (self.whenLoaded) {
@@ -287,7 +284,6 @@ var sounds = {
   }
 };
 exports.sounds = sounds;
-
 /*
 makeSound
 ---------
@@ -356,11 +352,9 @@ of you application. (The [Hexi game engine](https://github.com/kittykatattack/he
 function makeSound(source, loadHandler, shouldLoadSound, xhr, failHandler) {
 
   //The sound object that this function returns.
-  var o = {};
-
+  let o = {};
   //Set the default properties.
   o.volumeNode = actx.createGain();
-
   //Create the pan node using the efficient `createStereoPanner`
   //method, if it's available.
   if (!actx.createStereoPanner) {
@@ -377,6 +371,7 @@ function makeSound(source, loadHandler, shouldLoadSound, xhr, failHandler) {
   o.source = source;
   o.loop = false;
   o.playing = false;
+
 
   //The function that should run when the sound is loaded.
   o.loadHandler = undefined;
@@ -527,20 +522,9 @@ function makeSound(source, loadHandler, shouldLoadSound, xhr, failHandler) {
   //The first argument is the volume that the sound should
   //fade to, and the second value is the duration, in seconds,
   //that the fade should last.
-  o.fade = function (endValue, durationInSeconds) {
-    if (o.playing) {
-      o.volumeNode.gain.linearRampToValueAtTime(
-        o.volumeNode.gain.value, actx.currentTime
-      );
-      o.volumeNode.gain.linearRampToValueAtTime(
-        endValue, actx.currentTime + durationInSeconds
-      );
-    }
-  };
-
   //Fade a sound in, from an initial volume level of zero.
 
-  o.fadeIn = function(durationInSeconds) {
+  o.fadeIn = function (durationInSeconds) {
 
     //Set the volume to 0 so that you can fade
     //in from silence
@@ -656,7 +640,6 @@ function decodeAudio(o, xhr, loadHandler, failHandler) {
   );
 }
 exports.decodeAudio = decodeAudio;
-
 /*
 soundEffect
 -----------
@@ -723,7 +706,8 @@ function soundEffect(
 
   //Create an oscillator, gain and pan nodes, and connect them
   //together to the destination
-  var oscillator, volume, pan;
+
+  let oscillator, volume, pan;
   oscillator = actx.createOscillator();
   volume = actx.createGain();
   if (!actx.createStereoPanner) {
@@ -734,7 +718,6 @@ function soundEffect(
   oscillator.connect(volume);
   volume.connect(pan);
   pan.connect(actx.destination);
-
   //Set the supplied values
   volume.gain.value = volumeValue;
   if (!actx.createStereoPanner) {
@@ -748,8 +731,8 @@ function soundEffect(
   //than zero, a random pitch is selected that's within the range
   //specified by `frequencyValue`. The random pitch will be either
   //above or below the target frequency.
-  var frequency;
-  var randomInt = function (min, max) {
+  let frequency;
+  let randomInt = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min
   };
   if (randomValue > 0) {
@@ -761,7 +744,6 @@ function soundEffect(
     frequency = frequencyValue;
   }
   oscillator.frequency.value = frequency;
-
   //Apply effects
   if (attack > 0) fadeIn(volume);
   fadeOut(volume);
@@ -769,26 +751,22 @@ function soundEffect(
   if (echo) addEcho(volume);
   if (reverb) addReverb(volume);
   if (dissonance > 0) addDissonance();
-
   //Play the sound
   play(oscillator);
 
   //The helper functions:
-
   function addReverb(volumeNode) {
-    var convolver = actx.createConvolver();
+    let convolver = actx.createConvolver();
     convolver.buffer = impulseResponse(reverb[0], reverb[1], reverb[2], actx);
     volumeNode.connect(convolver);
     convolver.connect(pan);
   }
 
   function addEcho(volumeNode) {
-
     //Create the nodes
-    var feedback = actx.createGain(),
+    let feedback = actx.createGain(),
       delay = actx.createDelay(),
       filter = actx.createBiquadFilter();
-
     //Set their values (delay time, feedback time and filter frequency)
     delay.delayTime.value = echo[0];
     feedback.gain.value = echo[1];
@@ -796,6 +774,7 @@ function soundEffect(
 
     //Create the delay feedback loop, with
     //optional filtering
+
     delay.connect(feedback);
     if (echo[2]) {
       feedback.connect(filter);
@@ -803,20 +782,16 @@ function soundEffect(
     } else {
       feedback.connect(delay);
     }
-
     //Connect the delay loop to the oscillator's volume
     //node, and then to the destination
     volumeNode.connect(delay);
-
     //Connect the delay loop to the main sound chain's
     //pan node, so that the echo effect is directed to
     //the correct speaker
     delay.connect(pan);
   }
-
   //The `fadeIn` function
   function fadeIn(volumeNode) {
-
     //Set the volume to 0 so that you can fade
     //in from silence
     volumeNode.gain.value = 0;
@@ -828,7 +803,6 @@ function soundEffect(
       volumeValue, actx.currentTime + wait + attack
     );
   }
-
   //The `fadeOut` function
   function fadeOut(volumeNode) {
     volumeNode.gain.linearRampToValueAtTime(
@@ -838,15 +812,13 @@ function soundEffect(
       0, actx.currentTime + wait + attack + decay
     );
   }
-
   //The `pitchBend` function
   function pitchBend(oscillatorNode) {
     //If `reverse` is true, make the note drop in frequency. Useful for
     //shooting sounds
 
     //Get the frequency of the current oscillator
-    var frequency = oscillatorNode.frequency.value;
-
+    let frequency = oscillatorNode.frequency.value;
     //If `reverse` is true, make the sound drop in pitch
     if (!reverse) {
       oscillatorNode.frequency.linearRampToValueAtTime(
@@ -858,7 +830,6 @@ function soundEffect(
         actx.currentTime + wait + attack + decay
       );
     }
-
     //If `reverse` is false, make the note rise in pitch. Useful for
     //jumping sounds
     else {
@@ -872,12 +843,11 @@ function soundEffect(
       );
     }
   }
-
   //The `addDissonance` function
   function addDissonance() {
 
     //Create two more oscillators and gain nodes
-    var d1 = actx.createOscillator(),
+    let d1 = actx.createOscillator(),
       d2 = actx.createOscillator(),
       d1Volume = actx.createGain(),
       d2Volume = actx.createGain();
@@ -952,42 +922,55 @@ a convolver node can blend with the source sound. Make sure to include this func
 and `soundEffect` if you need to use the reverb feature.
 */
 
+
+//keon-kim-0 pr: optimized
 function impulseResponse(duration, decay, reverse, actx) {
 
   //The length of the buffer.
-  var length = actx.sampleRate * duration;
-
+  let length = actx.sampleRate * duration;
   //Create an audio buffer (an empty sound container) to store the reverb effect.
-  var impulse = actx.createBuffer(2, length, actx.sampleRate);
 
+  let impulse = actx.createBuffer(2, length, actx.sampleRate);
   //Use `getChannelData` to initialize empty arrays to store sound data for
   //the left and right channels.
-  var left = impulse.getChannelData(0),
+  let left = impulse.getChannelData(0),
     right = impulse.getChannelData(1);
-
   //Loop through each sample-frame and fill the channel
   //data with random noise.
-  for (var i = 0; i < length; i++) {
 
-    //Apply the reverse effect, if `reverse` is `true`.
-    var n;
-    if (reverse) {
-      n = length - i;
-    } else {
-      n = i;
+  //keon-kim-0 pr: only one declaration is needed, no need to declare every iteration
+  var n;
+
+  //Apply the reverse effect, if `reverse` is `true`.
+
+  //keon-kim-0 pr: seperate for loop(reverse & normal) for faster calculation!
+  if (reverse) {
+    for (let i = 0; i < length; i++) {
+
+      let multi = Math.pow(1 - n / length, decay)
+
+      left[n] = (Math.random() * 0.5) * multi;
+      right[n] = (Math.random() * 0.5) * multi;
     }
+  } else {
+    for (let i = 0; i < length; i++) {
 
-    //Fill the left and right channels with random white noise which
-    //decays exponentially.
-    left[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay);
-    right[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay);
+      if (reverse) {
+        n = length - i;
+      } else {
+        n = i;
+      }
+
+      let multi = Math.pow(1 - n / length, decay)
+
+      left[i] = (Math.random() * 0.5) * multi;
+      right[i] = (Math.random() * 0.5) * multi;
+    }
   }
-
   //Return the `impulse`.
   return impulse;
 }
 exports.impulseResponse = impulseResponse;
-
 
 /*
 keyboard
@@ -1019,7 +1002,7 @@ so just delete it if you don't want it!
 */
 
 function keyboard(keyCode) {
-  var key = {};
+  let key = {};
   key.code = keyCode;
   key.isDown = false;
   key.isUp = true;
