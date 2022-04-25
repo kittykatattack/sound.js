@@ -1,28 +1,36 @@
 <!doctype html>
-<meta charset="utf-8">
-<title>Sound.js</title>
-<script src="sound.js"></script>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Sound.js demonstration</title>
+	<script src="sound.js"></script>
+</head>
 <body>
-<p>Press keyboard keys to control the sounds
-<br>
-<br>Sounds from loaded sound files:
-<br>
-<br>a - Shoot sound
-<br>b - Play music
-<br>c - Pause music
-<br>d - Restart music
-<br>e - Play music from the 10 second point
-<br>f - Play the bounce sound with an echo effect
-<br>g - Fade the music out over 3 seconds
-<br>h - Fade the music in over 3 seconds
-<br>
-<br>Generated sound effects
-<br>
-<br>i - Shoot 
-<br>j - Jump
-<br>k - Explosion 
-<br>l - Bonus
-</p>
+	<p>Press keyboard keys to control the sounds</p>
+	<p>Sounds from loaded sound files:
+		<ul>
+			<li>a - Shoot sound</li>
+			<li>b - Play music</li>
+			<li>c - Pause music</li>
+			<li>d - Restart music</li>
+			<li>e - Play music from the 10 second point</li>
+			<li>f - Play the bounce sound with an echo effect</li>
+			<li>g - Fade the music out over 3 seconds</li>
+			<li>h - Fade the music in over 3 seconds</li>
+		</ul>
+	</p>
+	<p>Generated sound effects
+		<ul>
+			<li>i - Shoot</li>
+			<li>j - Jump</li>
+			<li>k - Explosion </li>
+			<li>l - Bonus</li>
+		</ul>
+	</p>
+	<p>
+		<a href="javascript:sounds['sounds/bounce.mp3'].play();">hyperlink trigger (bounce)<a/>
+		<button id="btn_some_trigger">Button Trigger (bounce + bonus)</button>
+	</p>
 <script>
 
 /*
@@ -131,6 +139,14 @@ function setup() {
   h.press = function() { 
     music.fadeIn(3);
   };
+
+
+  document.getElementById("btn_some_trigger").addEventListener('click', function(){
+    //You can even conditionally apply more effects here, prior to playing sound(s)
+    sounds["sounds/bounce.mp3"].play();
+    //Note the different "style" of invocation for pure effects generated sounds:
+    bonusSound();
+  });
 }
 
 /*
@@ -219,3 +235,4 @@ function bonusSound() {
     
 </script>
 </body>
+</html>
