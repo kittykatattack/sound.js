@@ -157,7 +157,10 @@ Thank you, Chris!
 
 }(window));
 
-var exports = module.exports = {};
+var exports = {};
+if (window['module'] && module.exports) {
+	exports = module.exports = {};
+}
 
 /*
 Define the audio context
