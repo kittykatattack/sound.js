@@ -3,9 +3,8 @@ Sound.js
 
 "Sound.js" is micro-library that lets you load, play, and generate sound effects and music for
 games and interactive applications. It's very small: less than 800
-lines of code and no dependencies. [Click here to try an interactive
-demo](https://cdn.rawgit.com/kittykatattack/sound.js/master/index.html). You can use it as-as, or
-integrate it into your existing framework.
+lines of code and no dependencies. [Click here to try an interactive demo](http://htmlpreview.github.io/?https://github.com/kittykatattack/sound.js/blob/master/index.html). 
+You can use it as-as, or integrate it into your existing framework.
 
 At its heart it's composed of
 just two, short, independent functions: `makeSound` and `soundEffect`. The `makeSound` function helps you
