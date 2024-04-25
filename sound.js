@@ -159,7 +159,7 @@ Thank you, Chris!
 
 var exports = {};
 if (window['module'] && module.exports) {
-	exports = module.exports = {};
+  exports = module.exports = {};
 }
 
 /*
@@ -188,7 +188,8 @@ call a `setup` method when all the files have finished loading:
     sounds.load([
       "sounds/shoot.wav",
       "sounds/music.wav",
-      "sounds/bounce.mp3"
+      "sounds/bounce.mp3",
+      "sounds/wapo_march.m4a"
     ]);
     sounds.whenLoaded = setup;
 
@@ -197,6 +198,7 @@ You can now access these loaded sounds in your application code like this:
 var shoot = sounds["sounds/shoot.wav"],
     music = sounds["sounds/music.wav"],
     bounce = sounds["sounds/bounce.mp3"];
+    march = sounds["sounds/wapo_march.m4a"];
 
 */
 
@@ -206,7 +208,7 @@ var sounds = {
   loaded: 0,
 
   //File extensions for different types of sounds.
-  audioExtensions: ["mp3", "ogg", "wav", "webm"],
+  audioExtensions: ["mp3", "ogg", "wav", "webm","m4a","aac"],
 
   //The callback function that should run when all assets have loaded.
   //Assign this when you load the fonts, like this: `assets.whenLoaded = makeSprites;`.
