@@ -28,8 +28,9 @@
 		</ul>
 	</p>
 	<p>
-		<a href="javascript:sounds['sounds/bounce.mp3'].play();">hyperlink trigger (bounce)<a/>
+		<a href="javascript:sounds['sounds/bounce.mp3'].play();">Hyperlink trigger #1 (bounce)<a/>
 		<button id="btn_some_trigger">Button Trigger (bounce + bonus)</button>
+		<a href="javascript:sounds['sounds/wapo_march.m4a'].play();">Hyperlink trigger #2 (wapo march)<a/>
 	</p>
 <script>
 
@@ -42,7 +43,8 @@ Part 1 - Working with sound files
 sounds.load([
   "sounds/shoot.wav", 
   "sounds/music.wav",
-  "sounds/bounce.mp3"
+  "sounds/bounce.mp3",
+  "sounds/wapo_march.m4a"
 ]);
 
 //Assign the callback function that should run

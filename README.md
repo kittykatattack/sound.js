@@ -8,7 +8,7 @@ You can use it as-as, or integrate it into your existing framework.
 
 At its heart it's composed of
 just two, short, independent functions: `makeSound` and `soundEffect`. The `makeSound` function helps you
-load and play sound files (mp3, wav, ogg, and webm). The `soundEffect`
+load and play sound files (mp3, mp4, wav, ogg, and webm). The `soundEffect`
 function helps you generate a wide range of sound and music effects
 from pure code.
 These two functions are completely modular and free of dependencies, so
@@ -46,7 +46,8 @@ method's array. Then assign a callback function to `sounds.whenLoaded`.
 sounds.load([
   "sounds/shoot.wav", 
   "sounds/music.wav",
-  "sounds/bounce.mp3"
+  "sounds/bounce.mp3",
+  "sounds/wapo_march.m4a"
 ]);
 
 //Assign the callback function that should run
@@ -84,6 +85,7 @@ they're easier to work with:
 var shoot = sounds["sounds/shoot.wav"],
     music = sounds["sounds/music.wav"],
     bounce = sounds["sounds/bounce.mp3"];
+    bounce = sounds["sounds/wapo_march.mp4"];
 ```
 You now have three sound objects, `shoot`, `music`, and `bounce` that
 you can play and control.
